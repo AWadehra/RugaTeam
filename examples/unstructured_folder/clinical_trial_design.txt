@@ -1,0 +1,18 @@
+Capita Selecta – Clinical Trial Design
+Date: August 15, 2023
+Speaker: Dr. Michael Chen
+Department: Clinical Epidemiology
+
+Fundamentals of clinical trial design and analysis.
+
+Topics:
+- Phase I, II, III, IV trials
+- Randomization methods
+- Blinding strategies
+- Sample size calculation
+- Interim analyses and stopping rules
+- Intention-to-treat analysis
+- Subgroup analyses
+
+Regulatory considerations and reporting guidelines (CONSORT).
+

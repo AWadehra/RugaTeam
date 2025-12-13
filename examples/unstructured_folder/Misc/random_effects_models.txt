@@ -1,0 +1,16 @@
+Seminar – Random Effects and Mixed Models
+Date: June 5, 2024
+Speaker: Dr. Tom Bakker
+Department: Clinical Epidemiology
+
+Introduction to random effects and mixed-effects models for clustered and longitudinal data.
+
+Topics:
+- Random intercept and random slope models
+- Multilevel modeling
+- Generalized linear mixed models (GLMM)
+- Model selection and diagnostics
+- Software implementation (R, Stata)
+
+Applications in clinical trials and observational studies with repeated measurements.
+

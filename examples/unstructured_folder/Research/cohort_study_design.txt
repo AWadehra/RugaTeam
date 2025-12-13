@@ -1,0 +1,17 @@
+Research Meeting – Cohort Study Design and Analysis
+Date: January 18, 2024
+Speaker: Dr. Anna van Leeuwen
+Department: Clinical Epidemiology
+
+Best practices for designing and analyzing cohort studies in clinical research.
+
+Topics:
+- Study design considerations
+- Sample size calculation
+- Exposure and outcome definition
+- Follow-up and loss to follow-up
+- Statistical analysis strategies
+- Handling time-varying exposures
+
+Examples from cardiovascular disease and cancer epidemiology studies.
+

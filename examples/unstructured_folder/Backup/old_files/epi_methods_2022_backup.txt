@@ -1,0 +1,16 @@
+Research Meeting – Epidemiological Methods Overview
+Date: October 20, 2022
+Speaker: Prof. Robert van den Berg
+Department: Clinical Epidemiology
+
+Overview of fundamental epidemiological methods and study designs.
+
+Topics:
+- Study designs (cohort, case-control, cross-sectional)
+- Measures of association (RR, OR, HR)
+- Bias and confounding
+- Effect modification
+- Sample size considerations
+
+Basic introduction for new PhD students and research staff.
+

@@ -1,0 +1,16 @@
+Capita Selecta – Survival Analysis Methods
+Date: November 14, 2023
+Speaker: Dr. John Smith
+ORCID: 0000-0002-1825-0097
+
+This lecture introduces survival analysis methods used in clinical research. Topics include time-to-event data, Kaplan-Meier curves, and Cox proportional hazards models.
+
+We cover:
+- Censoring and truncation
+- Non-parametric methods (Kaplan-Meier, log-rank tests)
+- Semi-parametric methods (Cox regression)
+- Parametric survival models
+- Competing risks analysis
+
+Applications in oncology, cardiovascular disease, and infectious disease research.
+

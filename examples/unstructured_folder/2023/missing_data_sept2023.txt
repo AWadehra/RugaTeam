@@ -1,0 +1,17 @@
+Capita Selecta – Handling Missing Data
+Date: September 12, 2023
+Speaker: Prof. Jan de Vries
+ORCID: 0000-0004-5678-9012
+
+Comprehensive overview of methods for handling missing data in clinical research.
+
+Topics:
+- Types of missingness (MCAR, MAR, MNAR)
+- Complete case analysis and its limitations
+- Single imputation methods
+- Multiple imputation (MI)
+- Maximum likelihood methods
+- Sensitivity analysis
+
+Practical examples using R and Stata.
+

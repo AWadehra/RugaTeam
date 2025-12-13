@@ -1,0 +1,17 @@
+Research Meeting – Systematic Review Methodology
+Date: February 8, 2024
+Speaker: Prof. Maria Janssen
+Department: Clinical Epidemiology
+
+Overview of systematic review and meta-analysis methods for evidence synthesis in clinical research.
+
+Topics:
+- Literature search strategies (PubMed, Embase, Cochrane)
+- Study selection and quality assessment
+- Data extraction and management
+- Statistical methods for meta-analysis
+- Publication bias assessment
+- GRADE approach for evidence quality
+
+Case study: Systematic review of statin therapy in primary prevention.
+
