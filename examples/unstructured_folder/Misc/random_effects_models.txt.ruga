@@ -1,0 +1,64 @@
+{
+  "file_id": "bbe3292c-f71b-4f5c-83ad-395626e9bef9",
+  "original_path": "examples/unstructured_folder/Misc/random_effects_models.txt",
+  "file_type": "txt",
+  "content_hash": "c06b44df6c08b953d6664213650d4e6985b8abd9585eff75eeebb9725bbc3111",
+  "title": "Seminar on Random Effects and Mixed Models",
+  "suggested_filename": "Seminar-Seminar-on-Random-Effects-and-Mixed-Models.txt",
+  "categories": [
+    "Seminar"
+  ],
+  "creation_date": null,
+  "last_modified_date": "2025-12-13T15:31:05.623808Z",
+  "analysis_date": "2025-12-13T16:25:30.835253Z",
+  "authors": [
+    {
+      "name": "Dr. Tom Bakker",
+      "orcid": null
+    }
+  ],
+  "topics": [],
+  "tags": [],
+  "summary": "Introduction to random effects and mixed-effects models for clustered and longitudinal data.",
+  "glossary_terms": [
+    {
+      "term": "random effects",
+      "definition": "A statistical model that accounts for variability across different groups or clusters.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "mixed-effects models",
+      "definition": "Models that incorporate both fixed effects and random effects.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "multilevel modeling",
+      "definition": "A statistical technique used to analyze data that is organized at more than one level.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "generalized linear mixed models (GLMM)",
+      "definition": "A type of mixed model that allows for response variables that have error distribution models other than a normal distribution.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "model selection",
+      "definition": "The process of selecting a statistical model from a set of candidate models.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "diagnostics",
+      "definition": "Techniques used to assess the validity of a statistical model.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "software implementation",
+      "definition": "The application of statistical models using software tools like R and Stata.",
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-13T16:25:30.835296Z"
+}

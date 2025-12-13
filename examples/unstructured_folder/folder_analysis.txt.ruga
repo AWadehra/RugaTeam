@@ -1,0 +1,35 @@
+{
+  "file_id": "78594569-8567-4f20-b0fe-2b4cc7b759d1",
+  "original_path": "examples/unstructured_folder/folder_analysis.txt",
+  "file_type": "txt",
+  "content_hash": "2d542e5f9dd5f60324c7003c22294353bb2d8c9b7a91b6f04c9c9ddbc2a3e4a0",
+  "title": "folder_analysis",
+  "suggested_filename": "Education-Capita-Selecta-folder_analysis.txt",
+  "categories": [
+    "Education/Capita Selecta",
+    "Education/Course",
+    "Research Meeting",
+    "Seminar",
+    "Workshop",
+    "Miscellaneous"
+  ],
+  "creation_date": null,
+  "last_modified_date": "2025-12-13T16:12:54.434999Z",
+  "analysis_date": "2025-12-13T16:25:18.358819Z",
+  "authors": [],
+  "topics": [
+    "survival analysis",
+    "epidemiology"
+  ],
+  "tags": [
+    "methods",
+    "statistics",
+    "clinical research"
+  ],
+  "summary": "",
+  "glossary_terms": [],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-13T16:25:18.358822Z"
+}
