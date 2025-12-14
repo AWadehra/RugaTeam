@@ -310,6 +310,27 @@ RugaTeam/
 └── pyproject.toml        # Project configuration
 ```
 
+## ActivePieces Integration
+
+RUGA integrates with [ActivePieces](https://www.activepieces.com), a workflow automation platform and hackathon sponsor. Create automated workflows that are triggered by RUGA's `/chat` endpoint via webhooks.
+
+![ActivePieces](assets/activepieces.png)
+
+### Example Workflow
+
+We've created a workflow that:
+1. Receives a report from RUGA's `/chat` endpoint via webhook
+2. Formats the report as an email using an LLM
+3. Sends the email to different people/groups automatically
+
+### Setup
+
+1. Create a workflow in ActivePieces with a webhook trigger
+2. Configure the AI agent in RUGA's `/chat` endpoint to call the ActivePieces webhook URL
+3. When chat generates a report, it automatically triggers the workflow
+
+**Resources:** [ActivePieces Docs](https://www.activepieces.com/docs) | [Webhook Guide](https://www.activepieces.com/docs/triggers/webhook)
+
 ## Troubleshooting
 
 ### CLI Issues
@@ -384,3 +405,5 @@ For issues, questions, or contributions, please open an issue on the repository.
 ---
 
 **RUGA** - Intelligent file analysis and organization powered by LLMs 🚀
+
+*Built for Fixathon 13/12/2025 | Sponsored by ActivePieces*
