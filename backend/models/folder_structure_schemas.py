@@ -48,3 +48,22 @@ class ApplyStructureResponse(BaseModel):
     files_copied: int = Field(description="Number of files successfully copied")
     folders_created: int = Field(description="Number of folders created")
     errors: List[str] = Field(default_factory=list, description="List of any errors encountered")
+
+
+class OrganizeAllRequest(BaseModel):
+    """Request to analyze, generate structure, and apply in one call."""
+    root_path: str = Field(description="Path to the root directory to organize")
+    wait_for_analysis: bool = Field(True, description="Wait for analysis to complete before generating structure")
+    max_wait_seconds: int = Field(300, description="Maximum seconds to wait for analysis (default: 5 minutes)")
+
+
+class OrganizeAllResponse(BaseModel):
+    """Response from the organize all endpoint."""
+    analysis_job_id: str = Field(description="Job ID from the analysis step")
+    structure_id: str = Field(description="Structure ID from the generation step")
+    new_root_path: str = Field(description="Path to the new organized folder structure")
+    files_analyzed: int = Field(description="Number of files analyzed")
+    files_organized: int = Field(description="Number of files organized/copied")
+    folders_created: int = Field(description="Number of folders created in the new structure")
+    analysis_status: str = Field(description="Final status of analysis job")
+    errors: List[str] = Field(default_factory=list, description="List of any errors encountered")

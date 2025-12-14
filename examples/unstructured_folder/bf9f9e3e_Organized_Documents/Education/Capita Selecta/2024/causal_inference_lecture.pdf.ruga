@@ -1,0 +1,64 @@
+{
+  "file_id": "a111d780-2dd6-42c2-83b3-5bcaa5f6721c",
+  "original_path": "examples/unstructured_folder/some_pdfs/causal_inference_lecture.pdf",
+  "file_type": "pdf",
+  "content_hash": "cae522f14d4a9b526f5d503a58779c67e23804c7ebbc297d75e675cc253c4233",
+  "title": "Causal Inference in Observational Studies",
+  "suggested_filename": "2024-05-10-Education-Capita-Selecta-Causal-Inference-in-Observational-Studies.pdf",
+  "categories": [
+    "Education/Capita Selecta"
+  ],
+  "creation_date": "2024-05-10",
+  "last_modified_date": "2025-12-13T16:05:52.372055Z",
+  "analysis_date": "2025-12-13T16:25:58.297733Z",
+  "authors": [
+    {
+      "name": "Dr. Pieter de Vries",
+      "orcid": "0000-0003-4567-8901"
+    }
+  ],
+  "topics": [],
+  "tags": [],
+  "summary": "Introduction to causal inference methods for observational data in clinical epidemiology.",
+  "glossary_terms": [
+    {
+      "term": "Confounding",
+      "definition": "A situation in which the effect of one variable on an outcome is mixed with the effect of another variable.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Selection bias",
+      "definition": "A bias in which the sample is not representative of the population from which it was drawn.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Directed acyclic graphs (DAGs)",
+      "definition": "A graphical representation of a set of variables and their conditional dependencies via directed edges.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Propensity score methods",
+      "definition": "Statistical techniques used to control for confounding in observational studies by matching or weighting based on the probability of treatment assignment.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Instrumental variables",
+      "definition": "Variables that are used in regression analysis to account for unobserved confounding.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Difference-in-differences",
+      "definition": "A statistical technique used to estimate causal relationships by comparing the changes in outcomes over time between a treatment group and a control group.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Regression discontinuity designs",
+      "definition": "A quasi-experimental pretest-posttest design that aims to identify the causal effects of interventions by assigning a cutoff or threshold.",
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-13T16:25:58.297749Z"
+}

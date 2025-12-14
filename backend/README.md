@@ -292,6 +292,48 @@ Creates a new root folder with UUID prefix and copies all files to their suggest
 
 **Note:** The new folder is created with a UUID prefix (first 8 characters) followed by the suggested root folder name, allowing you to create multiple organized versions for comparison.
 
+### POST `/organize/all`
+
+Convenience endpoint that chains three operations in one call for frontend simplicity:
+1. Analyze all files in the folder (`/analyze/folder`)
+2. Generate organized folder structure (`/organize/generate`)
+3. Apply the folder structure (`/organize/apply`)
+
+**Request Body:**
+```json
+{
+  "root_path": "/path/to/root/directory",
+  "wait_for_analysis": true,
+  "max_wait_seconds": 300
+}
+```
+
+**Response:**
+```json
+{
+  "analysis_job_id": "550e8400-e29b-41d4-a716-446655440000",
+  "structure_id": "660e8400-e29b-41d4-a716-446655440001",
+  "new_root_path": "/path/to/550e8400_Organized_Documents",
+  "files_analyzed": 15,
+  "files_organized": 15,
+  "folders_created": 8,
+  "analysis_status": "analyzed",
+  "errors": []
+}
+```
+
+**Parameters:**
+- `root_path` (required): Path to the root directory to organize
+- `wait_for_analysis` (optional, default: true): Wait for analysis to complete before generating structure
+- `max_wait_seconds` (optional, default: 300): Maximum seconds to wait for analysis (5 minutes)
+
+**Analysis Status Values:**
+- `analyzed`: Analysis completed successfully
+- `already_analyzed`: All files already had .ruga metadata
+- `started`: Analysis started but not waited for completion
+- `error`: Analysis encountered an error
+- `timeout`: Analysis did not complete within max_wait_seconds
+
 ## Example Usage
 
 ### List files in a directory
@@ -378,6 +420,27 @@ curl -X POST "http://localhost:8000/organize/apply" \
 ```
 
 Each application creates a new folder with UUID prefix so you can compare different organization attempts.
+
+### Organize all (convenience endpoint)
+
+This endpoint chains all three operations (analyze, generate, apply) in one call for frontend simplicity:
+
+```bash
+curl -X POST "http://localhost:8000/organize/all" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "root_path": "/path/to/examples/unstructured_folder",
+    "wait_for_analysis": true,
+    "max_wait_seconds": 300
+  }'
+```
+
+This will:
+1. Analyze all files in the folder (if not already analyzed)
+2. Wait for analysis to complete (optional, configurable)
+3. Generate an organized folder structure
+4. Apply the structure by copying files
+5. Return the new root path with organized folders and files
 
 ## API Documentation
 

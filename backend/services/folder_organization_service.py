@@ -130,8 +130,10 @@ Your task is to analyze file metadata and suggest an organized folder structure 
 - Groups files by category (Education/Capita Selecta, Education/Course, Research Meeting, Seminar, Workshop, Miscellaneous)
 - Organizes by academic year when dates are available
 - Uses clear, descriptive folder names
+- You can decide to give a different name to the file based on the summary, suggested_filename, title, topics, tags, etc.
 - Avoids deep nesting (max 3-4 levels)
 - Keeps related files together
+- If duplicates are found, move the duplicate to the original file's folder with a suffix indicating the duplicate number.
 
 For each file, suggest where it should be moved based on:
 - Its categories (primary organization)

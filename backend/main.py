@@ -48,6 +48,8 @@ from models.folder_structure_schemas import (
     FolderStructureResponse,
     ApplyStructureRequest,
     ApplyStructureResponse,
+    OrganizeAllRequest,
+    OrganizeAllResponse,
 )
 
 # Global services
@@ -106,6 +108,7 @@ async def root():
             "GET /jobs/{job_id}": "Get detailed job information with file statuses",
             "POST /organize/generate": "Generate organized folder structure using LLM",
             "POST /organize/apply": "Apply folder structure by copying files",
+            "POST /organize/all": "Analyze, generate structure, and apply in one call",
         },
     }
 
@@ -401,6 +404,112 @@ async def apply_folder_structure(request: ApplyStructureRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error applying folder structure: {str(e)}")
+
+
+@app.post("/organize/all", response_model=OrganizeAllResponse)
+async def organize_all(request: OrganizeAllRequest):
+    """
+    Convenience endpoint that chains three operations:
+    1. Analyze all files in the folder (POST /analyze/folder)
+    2. Generate organized folder structure (POST /organize/generate)
+    3. Apply the folder structure (POST /organize/apply)
+    
+    Returns the new root path with organized folders and files.
+    This is designed for frontend simplicity - one call does everything.
+    """
+    errors = []
+    analysis_job_id = None
+    structure_id = None
+    new_root_path = None
+    files_analyzed = 0
+    files_organized = 0
+    folders_created = 0
+    analysis_status = "unknown"
+    
+    try:
+        root = Path(request.root_path)
+        if not root.exists():
+            raise HTTPException(status_code=404, detail=f"Root path does not exist: {request.root_path}")
+        if not root.is_dir():
+            raise HTTPException(status_code=400, detail=f"Path is not a directory: {request.root_path}")
+        
+        # Step 1: Analyze folder
+        try:
+            analyze_request = AnalyzeFolderRequest(root_path=request.root_path)
+            analyze_response = await analyze_folder(analyze_request)
+            analysis_job_id = analyze_response.job_id
+            files_analyzed = analyze_response.files_queued
+            
+            # Wait for analysis to complete if requested
+            if request.wait_for_analysis and files_analyzed > 0:
+                import time
+                start_time = time.time()
+                while time.time() - start_time < request.max_wait_seconds:
+                    job = await job_service.get_job(analysis_job_id)
+                    if not job:
+                        errors.append("Analysis job not found")
+                        break
+                    
+                    if job.status == AnalysisStatus.ANALYZED:
+                        analysis_status = "analyzed"
+                        break
+                    elif job.status == AnalysisStatus.ERROR:
+                        analysis_status = "error"
+                        if job.error_message:
+                            errors.append(f"Analysis error: {job.error_message}")
+                        break
+                    
+                    # Wait a bit before checking again
+                    await asyncio.sleep(2)
+                else:
+                    # Timeout
+                    analysis_status = "timeout"
+                    errors.append(f"Analysis did not complete within {request.max_wait_seconds} seconds")
+            elif files_analyzed == 0:
+                # No files to analyze, check if files already have .ruga
+                analysis_status = "already_analyzed"
+            else:
+                analysis_status = "started"
+        except Exception as e:
+            errors.append(f"Error in analysis step: {str(e)}")
+            if not analysis_job_id:
+                raise HTTPException(status_code=500, detail=f"Failed to start analysis: {str(e)}")
+        
+        # Step 2: Generate folder structure
+        try:
+            generate_request = GenerateStructureRequest(root_path=request.root_path)
+            generate_response = await generate_folder_structure(generate_request)
+            structure_id = generate_response.structure_id
+        except Exception as e:
+            errors.append(f"Error in structure generation step: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to generate structure: {str(e)}")
+        
+        # Step 3: Apply folder structure
+        try:
+            apply_request = ApplyStructureRequest(structure_id=structure_id, dry_run=False)
+            apply_response = await apply_folder_structure(apply_request)
+            new_root_path = apply_response.new_root_path
+            files_organized = apply_response.files_copied
+            folders_created = apply_response.folders_created
+            errors.extend(apply_response.errors)
+        except Exception as e:
+            errors.append(f"Error in structure application step: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to apply structure: {str(e)}")
+        
+        return OrganizeAllResponse(
+            analysis_job_id=analysis_job_id or "",
+            structure_id=structure_id or "",
+            new_root_path=new_root_path or "",
+            files_analyzed=files_analyzed,
+            files_organized=files_organized,
+            folders_created=folders_created,
+            analysis_status=analysis_status,
+            errors=errors,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error in organize all: {str(e)}")
 
 
 if __name__ == "__main__":
