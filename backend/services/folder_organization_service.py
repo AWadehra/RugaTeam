@@ -20,10 +20,10 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 from ruga_file_handler import load_ruga_metadata, find_all_ruga_files
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from models.folder_structure_schemas import FolderStructure, FileMove
 from services.vector_store_service import VectorStoreService
+from utils.llm_config import get_chat_llm
 
 
 class FolderOrganizationService:
@@ -37,10 +37,7 @@ class FolderOrganizationService:
         self.structure_roots: Dict[str, str] = {}
         
         # Initialize LLM with structured output
-        self.llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0,
-        )
+        self.llm = get_chat_llm(temperature=0)
         self.structured_llm = self.llm.with_structured_output(FolderStructure)
         
         # Vector store service reference

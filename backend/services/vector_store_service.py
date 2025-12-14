@@ -11,11 +11,17 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from docling.document_converter import DocumentConverter
+
+# Add backend to path for imports
+BACKEND_DIR = Path(__file__).parent.parent
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+from utils.llm_config import get_embeddings
 
 
 class VectorStoreService:
@@ -36,8 +42,8 @@ class VectorStoreService:
         self.persist_directory.mkdir(exist_ok=True)
         self.collection_name = collection_name
         
-        # Initialize embeddings
-        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+        # Initialize embeddings (uses GreenPT if enabled, otherwise OpenAI)
+        self.embeddings = get_embeddings()
         
         # Initialize vector store
         self.vector_store = Chroma(
