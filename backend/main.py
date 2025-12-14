@@ -11,10 +11,12 @@ Endpoints:
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 import sys
 import asyncio
+import json
 from contextlib import asynccontextmanager
 
 # Add project root to path to import from examples
@@ -33,6 +35,7 @@ from services.analysis_service import AnalysisService
 from services.job_service import JobService
 from services.folder_organization_service import FolderOrganizationService
 from services.vector_store_service import VectorStoreService
+from services.chat_service import ChatService
 from models.schemas import (
     FileInfo,
     FileListResponse,
@@ -43,6 +46,8 @@ from models.schemas import (
     JobListResponse,
     AnalysisStatus,
     JobType,
+    ChatRequest,
+    ChatMessage,
 )
 from models.folder_structure_schemas import (
     GenerateStructureRequest,
@@ -59,12 +64,13 @@ analysis_service: Optional[AnalysisService] = None
 job_service: Optional[JobService] = None
 folder_org_service: Optional[FolderOrganizationService] = None
 vector_store_service: Optional[VectorStoreService] = None
+chat_service: Optional[ChatService] = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize and cleanup services."""
-    global file_service, analysis_service, job_service, folder_org_service, vector_store_service
+    global file_service, analysis_service, job_service, folder_org_service, vector_store_service, chat_service
     
     # Initialize services
     job_service = JobService()
@@ -72,6 +78,7 @@ async def lifespan(app: FastAPI):
     vector_store_service = VectorStoreService()
     analysis_service = AnalysisService(job_service=job_service, vector_store_service=vector_store_service)
     folder_org_service = FolderOrganizationService(vector_store_service=vector_store_service)
+    chat_service = ChatService(vector_store_service=vector_store_service)
     
     print(f"✓ Vector store initialized with {vector_store_service.get_document_count()} documents")
     
@@ -114,6 +121,7 @@ async def root():
             "POST /organize/generate": "Generate organized folder structure using LLM",
             "POST /organize/apply": "Apply folder structure by copying files",
             "POST /organize/all": "Analyze, generate structure, and apply in one call",
+            "POST /chat": "Chat with documents using RAG (streaming)",
         },
     }
 
@@ -515,6 +523,117 @@ async def organize_all(request: OrganizeAllRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error in organize all: {str(e)}")
+
+
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    """
+    Chat with documents using RAG. Streams responses in real-time.
+    
+    This endpoint uses the vector store to retrieve relevant documents and
+    generates responses using a LangChain agent. Responses are streamed
+    using Server-Sent Events (SSE).
+    
+    Request Body:
+    - message: The user's message/query
+    - conversation_history: Optional list of previous messages for context
+    """
+    try:
+        if not chat_service:
+            raise HTTPException(status_code=500, detail="Chat service not initialized")
+        
+        # Get the agent
+        agent = chat_service.get_agent()
+        
+        # Build messages from request
+        messages = []
+        
+        # Add conversation history if provided
+        if request.conversation_history:
+            for msg in request.conversation_history:
+                messages.append({"role": msg.role, "content": msg.content})
+        
+        # Add current user message
+        messages.append({"role": "user", "content": request.message})
+        
+        # Create async generator for streaming
+        async def generate_stream():
+            """Generate streaming response from agent."""
+            try:
+                # Run agent.stream in executor since it's synchronous
+                loop = asyncio.get_event_loop()
+                
+                def run_agent():
+                    """Run agent stream synchronously in executor."""
+                    steps = []
+                    for step in agent.stream(
+                        {"messages": messages},
+                        stream_mode="values",
+                    ):
+                        steps.append(step)
+                    return steps
+                
+                # Execute in thread pool
+                steps = await loop.run_in_executor(None, run_agent)
+                
+                # Stream the results
+                for step in steps:
+                    messages_list = step.get("messages", [])
+                    if messages_list:
+                        last_message = messages_list[-1]
+                        
+                        # Extract content from message
+                        content = ""
+                        msg_type = "ai"
+                        
+                        # Handle different message types
+                        if hasattr(last_message, 'content'):
+                            content = last_message.content or ""
+                            if hasattr(last_message, 'type'):
+                                msg_type = last_message.type
+                        elif isinstance(last_message, dict):
+                            content = last_message.get("content", "")
+                            msg_type = last_message.get("type", "ai")
+                        else:
+                            content = str(last_message)
+                        
+                        # Only send non-empty content
+                        if content:
+                            # Format as JSON for SSE
+                            data = {
+                                "type": msg_type,
+                                "content": content,
+                            }
+                            
+                            # Send as SSE
+                            yield f"data: {json.dumps(data)}\n\n"
+                
+                # Send done signal
+                yield f"data: {json.dumps({'type': 'done'})}\n\n"
+                
+            except Exception as e:
+                # Send error
+                error_data = {
+                    "type": "error",
+                    "content": str(e),
+                }
+                yield f"data: {json.dumps(error_data)}\n\n"
+        
+        # Return streaming response
+        return StreamingResponse(
+            generate_stream(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",  # Disable buffering for nginx
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error in chat: {str(e)}")
 
 
 if __name__ == "__main__":

@@ -295,3 +295,351 @@ class VectorStoreService:
             return self.vector_store._collection.count()
         except Exception:
             return 0
+    
+    def filter_by_category(self, category: str, query: Optional[str] = None, k: int = 5) -> List[Document]:
+        """
+        Filter documents by category and optionally search within them.
+        
+        Args:
+            category: Category to filter by
+            query: Optional search query to filter results
+            k: Number of results to return
+            
+        Returns:
+            List of filtered documents
+        """
+        try:
+            collection = self.vector_store._collection
+            
+            # Get all documents - we'll filter in Python since categories are stored as string representations
+            # First, get all documents with embeddings
+            all_results = collection.get(
+                include=["documents", "metadatas", "embeddings", "ids"],
+            )
+            
+            if not all_results or not all_results.get("ids"):
+                return []
+            
+            # Filter by category in Python
+            # Categories are stored as string representations like "['Education/Capita Selecta', 'Research Meeting']"
+            filtered_ids = []
+            filtered_documents = []
+            filtered_metadatas = []
+            filtered_embeddings = []
+            
+            for i, metadata in enumerate(all_results.get("metadatas", [])):
+                categories_str = metadata.get("categories", "")
+                if categories_str:
+                    # Parse the string representation or check if category is in the string
+                    # Handle both list string format and simple string format
+                    import ast
+                    try:
+                        # Try to parse as Python literal (list string)
+                        categories_list = ast.literal_eval(categories_str)
+                        if isinstance(categories_list, list):
+                            if any(category.lower() in cat.lower() or cat.lower() in category.lower() 
+                                   for cat in categories_list):
+                                filtered_ids.append(all_results["ids"][i])
+                                filtered_documents.append(all_results["documents"][i])
+                                filtered_metadatas.append(metadata)
+                                if all_results.get("embeddings"):
+                                    filtered_embeddings.append(all_results["embeddings"][i])
+                        elif isinstance(categories_list, str):
+                            if category.lower() in categories_list.lower():
+                                filtered_ids.append(all_results["ids"][i])
+                                filtered_documents.append(all_results["documents"][i])
+                                filtered_metadatas.append(metadata)
+                                if all_results.get("embeddings"):
+                                    filtered_embeddings.append(all_results["embeddings"][i])
+                    except (ValueError, SyntaxError):
+                        # If parsing fails, do simple string contains check
+                        if category.lower() in categories_str.lower():
+                            filtered_ids.append(all_results["ids"][i])
+                            filtered_documents.append(all_results["documents"][i])
+                            filtered_metadatas.append(metadata)
+                            if all_results.get("embeddings"):
+                                filtered_embeddings.append(all_results["embeddings"][i])
+            
+            if not filtered_ids:
+                return []
+            
+            results = {
+                "ids": filtered_ids,
+                "documents": filtered_documents,
+                "metadatas": filtered_metadatas,
+                "embeddings": filtered_embeddings,
+            }
+            
+            # If query is provided, use similarity search on filtered results
+            if query:
+                # Get embeddings for the query
+                query_embedding = self.embeddings.embed_query(query)
+                
+                # Get embeddings for filtered documents
+                filtered_embeddings = results.get("embeddings", [])
+                filtered_ids = results["ids"]
+                filtered_metadatas = results.get("metadatas", [])
+                filtered_documents = results.get("documents", [])
+                
+                if not filtered_embeddings:
+                    # If no embeddings, compute them (shouldn't happen, but handle it)
+                    return []
+                
+                # Compute similarities
+                import numpy as np
+                query_vec = np.array(query_embedding)
+                doc_embeddings = np.array(filtered_embeddings)
+                
+                # Compute cosine similarities
+                similarities = np.dot(doc_embeddings, query_vec) / (
+                    np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_vec)
+                )
+                
+                # Get top k
+                top_indices = np.argsort(similarities)[::-1][:k]
+                
+                # Build documents
+                docs = []
+                for idx in top_indices:
+                    doc = Document(
+                        page_content=filtered_documents[idx],
+                        metadata=filtered_metadatas[idx] if filtered_metadatas else {},
+                    )
+                    docs.append(doc)
+                
+                return docs
+            else:
+                # Return filtered documents without search
+                docs = []
+                for i, doc_text in enumerate(results.get("documents", [])):
+                    doc = Document(
+                        page_content=doc_text,
+                        metadata=results.get("metadatas", [{}])[i] if results.get("metadatas") else {},
+                    )
+                    docs.append(doc)
+                
+                return docs[:k]
+                
+        except Exception as e:
+            print(f"  ❌ Error filtering by category: {e}")
+            return []
+    
+    def filter_by_topic(self, topic: str, query: Optional[str] = None, k: int = 5) -> List[Document]:
+        """
+        Filter documents by topic and optionally search within them.
+        
+        Args:
+            topic: Topic to filter by
+            query: Optional search query to filter results
+            k: Number of results to return
+            
+        Returns:
+            List of filtered documents
+        """
+        try:
+            collection = self.vector_store._collection
+            
+            # Get all documents - we'll filter in Python since topics are stored as string representations
+            all_results = collection.get(
+                include=["documents", "metadatas", "embeddings", "ids"],
+            )
+            
+            if not all_results or not all_results.get("ids"):
+                return []
+            
+            # Filter by topic in Python
+            filtered_ids = []
+            filtered_documents = []
+            filtered_metadatas = []
+            filtered_embeddings = []
+            
+            for i, metadata in enumerate(all_results.get("metadatas", [])):
+                topics_str = metadata.get("topics", "")
+                if topics_str:
+                    import ast
+                    try:
+                        topics_list = ast.literal_eval(topics_str)
+                        if isinstance(topics_list, list):
+                            if any(topic.lower() in t.lower() or t.lower() in topic.lower() 
+                                   for t in topics_list):
+                                filtered_ids.append(all_results["ids"][i])
+                                filtered_documents.append(all_results["documents"][i])
+                                filtered_metadatas.append(metadata)
+                                if all_results.get("embeddings"):
+                                    filtered_embeddings.append(all_results["embeddings"][i])
+                        elif isinstance(topics_list, str):
+                            if topic.lower() in topics_list.lower():
+                                filtered_ids.append(all_results["ids"][i])
+                                filtered_documents.append(all_results["documents"][i])
+                                filtered_metadatas.append(metadata)
+                                if all_results.get("embeddings"):
+                                    filtered_embeddings.append(all_results["embeddings"][i])
+                    except (ValueError, SyntaxError):
+                        if topic.lower() in topics_str.lower():
+                            filtered_ids.append(all_results["ids"][i])
+                            filtered_documents.append(all_results["documents"][i])
+                            filtered_metadatas.append(metadata)
+                            if all_results.get("embeddings"):
+                                filtered_embeddings.append(all_results["embeddings"][i])
+            
+            if not filtered_ids:
+                return []
+            
+            results = {
+                "ids": filtered_ids,
+                "documents": filtered_documents,
+                "metadatas": filtered_metadatas,
+                "embeddings": filtered_embeddings,
+            }
+            
+            # If query is provided, use similarity search on filtered results
+            if query:
+                query_embedding = self.embeddings.embed_query(query)
+                filtered_embeddings = results.get("embeddings", [])
+                filtered_documents = results.get("documents", [])
+                filtered_metadatas = results.get("metadatas", [])
+                
+                if not filtered_embeddings:
+                    return []
+                
+                import numpy as np
+                query_vec = np.array(query_embedding)
+                doc_embeddings = np.array(filtered_embeddings)
+                similarities = np.dot(doc_embeddings, query_vec) / (
+                    np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_vec)
+                )
+                top_indices = np.argsort(similarities)[::-1][:k]
+                
+                docs = []
+                for idx in top_indices:
+                    doc = Document(
+                        page_content=filtered_documents[idx],
+                        metadata=filtered_metadatas[idx] if filtered_metadatas else {},
+                    )
+                    docs.append(doc)
+                
+                return docs
+            else:
+                docs = []
+                for i, doc_text in enumerate(results.get("documents", [])):
+                    doc = Document(
+                        page_content=doc_text,
+                        metadata=results.get("metadatas", [{}])[i] if results.get("metadatas") else {},
+                    )
+                    docs.append(doc)
+                
+                return docs[:k]
+                
+        except Exception as e:
+            print(f"  ❌ Error filtering by topic: {e}")
+            return []
+    
+    def filter_by_tag(self, tag: str, query: Optional[str] = None, k: int = 5) -> List[Document]:
+        """
+        Filter documents by tag and optionally search within them.
+        
+        Args:
+            tag: Tag to filter by
+            query: Optional search query to filter results
+            k: Number of results to return
+            
+        Returns:
+            List of filtered documents
+        """
+        try:
+            collection = self.vector_store._collection
+            
+            # Get all documents - we'll filter in Python since tags are stored as string representations
+            all_results = collection.get(
+                include=["documents", "metadatas", "embeddings", "ids"],
+            )
+            
+            if not all_results or not all_results.get("ids"):
+                return []
+            
+            # Filter by tag in Python
+            filtered_ids = []
+            filtered_documents = []
+            filtered_metadatas = []
+            filtered_embeddings = []
+            
+            for i, metadata in enumerate(all_results.get("metadatas", [])):
+                tags_str = metadata.get("tags", "")
+                if tags_str:
+                    import ast
+                    try:
+                        tags_list = ast.literal_eval(tags_str)
+                        if isinstance(tags_list, list):
+                            if any(tag.lower() in t.lower() or t.lower() in tag.lower() 
+                                   for t in tags_list):
+                                filtered_ids.append(all_results["ids"][i])
+                                filtered_documents.append(all_results["documents"][i])
+                                filtered_metadatas.append(metadata)
+                                if all_results.get("embeddings"):
+                                    filtered_embeddings.append(all_results["embeddings"][i])
+                        elif isinstance(tags_list, str):
+                            if tag.lower() in tags_list.lower():
+                                filtered_ids.append(all_results["ids"][i])
+                                filtered_documents.append(all_results["documents"][i])
+                                filtered_metadatas.append(metadata)
+                                if all_results.get("embeddings"):
+                                    filtered_embeddings.append(all_results["embeddings"][i])
+                    except (ValueError, SyntaxError):
+                        if tag.lower() in tags_str.lower():
+                            filtered_ids.append(all_results["ids"][i])
+                            filtered_documents.append(all_results["documents"][i])
+                            filtered_metadatas.append(metadata)
+                            if all_results.get("embeddings"):
+                                filtered_embeddings.append(all_results["embeddings"][i])
+            
+            if not filtered_ids:
+                return []
+            
+            results = {
+                "ids": filtered_ids,
+                "documents": filtered_documents,
+                "metadatas": filtered_metadatas,
+                "embeddings": filtered_embeddings,
+            }
+            
+            # If query is provided, use similarity search on filtered results
+            if query:
+                query_embedding = self.embeddings.embed_query(query)
+                filtered_embeddings = results.get("embeddings", [])
+                filtered_documents = results.get("documents", [])
+                filtered_metadatas = results.get("metadatas", [])
+                
+                if not filtered_embeddings:
+                    return []
+                
+                import numpy as np
+                query_vec = np.array(query_embedding)
+                doc_embeddings = np.array(filtered_embeddings)
+                similarities = np.dot(doc_embeddings, query_vec) / (
+                    np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_vec)
+                )
+                top_indices = np.argsort(similarities)[::-1][:k]
+                
+                docs = []
+                for idx in top_indices:
+                    doc = Document(
+                        page_content=filtered_documents[idx],
+                        metadata=filtered_metadatas[idx] if filtered_metadatas else {},
+                    )
+                    docs.append(doc)
+                
+                return docs
+            else:
+                docs = []
+                for i, doc_text in enumerate(results.get("documents", [])):
+                    doc = Document(
+                        page_content=doc_text,
+                        metadata=results.get("metadatas", [{}])[i] if results.get("metadatas") else {},
+                    )
+                    docs.append(doc)
+                
+                return docs[:k]
+                
+        except Exception as e:
+            print(f"  ❌ Error filtering by tag: {e}")
+            return []

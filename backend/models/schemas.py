@@ -86,3 +86,15 @@ class JobInfo(BaseModel):
 class JobListResponse(BaseModel):
     """Response for listing jobs."""
     jobs: List[JobInfo]
+
+
+class ChatMessage(BaseModel):
+    """A chat message."""
+    role: str  # "user" or "assistant"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    """Request for chat endpoint."""
+    message: str
+    conversation_history: Optional[List[ChatMessage]] = None
