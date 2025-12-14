@@ -2,6 +2,10 @@
 
 Command-line interface for the RUGA server API.
 
+![RUGA CLI](../assets/ruga-cli.png)
+
+*Screenshot of the RUGA CLI showing the ASCII art banner and server information*
+
 ## Installation
 
 The CLI is included with the RUGA server package. After installing the project dependencies, the `ruga` command will be available.
