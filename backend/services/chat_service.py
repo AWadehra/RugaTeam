@@ -5,9 +5,9 @@ Service for managing RAG chat interactions with the vector store.
 from typing import Optional
 from langchain.tools import tool
 from langchain.agents import create_agent
-from langchain_openai import ChatOpenAI
 from langchain_chroma import Chroma
 from services.vector_store_service import VectorStoreService
+from utils.llm_config import get_chat_llm
 
 
 class ChatService:
@@ -21,10 +21,7 @@ class ChatService:
             vector_store_service: Vector store service instance
         """
         self.vector_store_service = vector_store_service
-        self.model = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0,
-        )
+        self.model = get_chat_llm(temperature=0)
         self._agent = None
     
     def _create_retrieve_tool(self, vector_store_instance: Chroma):

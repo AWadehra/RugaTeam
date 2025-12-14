@@ -310,6 +310,16 @@ RugaTeam/
 └── pyproject.toml        # Project configuration
 ```
 
+## GreenPT Integration
+
+RUGA supports [GreenPT](https://docs.greenpt.ai/), an alternative LLM provider. Enable it by setting `GREENPT_ENABLED=true` and `GREENPT_API_KEY` in your `.env` file.
+
+**Models:**
+- LLM: `mistral-small-3.2-24b-instruct-2506` (for chat and folder organization)
+- Embeddings: `green-embedding` (for vector store)
+
+If disabled, RUGA uses OpenAI by default (`gpt-4o-mini` for LLM, `text-embedding-3-small` for embeddings).
+
 ## ActivePieces Integration
 
 RUGA integrates with [ActivePieces](https://www.activepieces.com), a workflow automation platform and hackathon sponsor. Create automated workflows that are triggered by RUGA's `/chat` endpoint via webhooks.
@@ -350,7 +360,8 @@ We've created a workflow that:
 ### Server Issues
 
 **Analysis not working:**
-- Verify `OPENAI_API_KEY` is set in `.env` file
+- Verify `OPENAI_API_KEY` is set in `.env` file (or `GREENPT_API_KEY` if using GreenPT)
+- If using GreenPT, ensure `GREENPT_ENABLED=true` is set
 - Check server logs for error messages
 - Ensure files are readable and in supported formats
 
@@ -377,7 +388,8 @@ uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 - **LangChain**: LLM integration and RAG
 - **ChromaDB**: Vector store for document embeddings
 - **Docling**: Document parsing (PDF, DOCX)
-- **OpenAI**: LLM and embeddings
+- **OpenAI**: LLM and embeddings (default)
+- **GreenPT**: Alternative LLM provider (optional, via environment variable)
 - **Click**: CLI framework
 - **Rich**: Terminal formatting and ASCII art
 - **Pydantic**: Data validation
@@ -385,10 +397,12 @@ uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ### Environment Variables
 
 Required:
-- `OPENAI_API_KEY`: Your OpenAI API key for file analysis and chat
+- `OPENAI_API_KEY`: Your OpenAI API key for file analysis and chat (or use GreenPT)
 
 Optional:
 - `RUGA_SERVER_URL`: Server URL for CLI (default: `http://localhost:8000`)
+- `GREENPT_ENABLED`: Set to `true` to use GreenPT instead of OpenAI (default: `false`)
+- `GREENPT_API_KEY`: Your GreenPT API key (required if `GREENPT_ENABLED=true`)
 
 ## License
 
