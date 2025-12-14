@@ -1,6 +1,6 @@
 {
-  "file_id": "20f25e94-b484-43b9-9d28-9aad17dc89a6",
-  "original_path": "examples/unstructured_folder/some_pdfs/presentation_final_v2_FINAL.pdf",
+  "file_id": "4a9bbdd8-e2b5-4058-bec9-27c9d7182d5d",
+  "original_path": "/Users/mperini/Projects/RugaTeam/examples/unstructured_folder/some_pdfs/presentation_final_v2_FINAL.pdf",
   "file_type": "pdf",
   "content_hash": "278b9263f3b1796c68f29ea1a84764a97c52eb6ca5b3cb42ee7113a417bf45f9",
   "title": "Capita Selecta Lecture - Machine Learning in Epidemiology",
@@ -10,7 +10,7 @@
   ],
   "creation_date": null,
   "last_modified_date": "2025-12-13T16:05:52.370758Z",
-  "analysis_date": "2025-12-13T16:25:47.979748Z",
+  "analysis_date": "2025-12-14T11:22:07.838581Z",
   "authors": [
     {
       "name": "Dr. Sarah van der Berg",
@@ -19,7 +19,8 @@
   ],
   "topics": [
     "machine learning",
-    "epidemiology"
+    "epidemiology",
+    "survival analysis"
   ],
   "tags": [
     "methods",
@@ -35,32 +36,17 @@
     },
     {
       "term": "epidemiology",
-      "definition": "The branch of medicine that deals with the incidence, distribution, and control of diseases.",
+      "definition": "The study of how often diseases occur in different groups of people and why.",
       "source": "llm_extracted"
     },
     {
-      "term": "feature selection",
-      "definition": "The process of selecting a subset of relevant features for model construction.",
-      "source": "llm_extracted"
-    },
-    {
-      "term": "model validation",
-      "definition": "The process of ensuring that a model performs well on unseen data.",
-      "source": "llm_extracted"
-    },
-    {
-      "term": "cross-validation",
-      "definition": "A technique for assessing how the results of a statistical analysis will generalize to an independent data set.",
-      "source": "llm_extracted"
-    },
-    {
-      "term": "interpretability",
-      "definition": "The degree to which a human can understand the cause of a decision made by a model.",
+      "term": "survival analysis",
+      "definition": "A branch of statistics that deals with the analysis of time-to-event data.",
       "source": "llm_extracted"
     }
   ],
   "possible_duplicate": false,
   "reviewed_by_human": false,
   "llm_model": "gpt-4o-mini",
-  "extracted_at": "2025-12-13T16:25:47.979790Z"
+  "extracted_at": "2025-12-14T11:22:07.838592Z"
 }

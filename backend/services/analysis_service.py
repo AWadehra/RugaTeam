@@ -22,12 +22,13 @@ if str(BACKEND_DIR) not in sys.path:
 from ruga_file_handler import has_ruga_metadata, save_ruga_metadata
 from process_folder import process_file_for_metadata
 from models.schemas import AnalysisStatus
+from services.vector_store_service import VectorStoreService
 
 
 class AnalysisService:
     """Service for managing file analysis tasks."""
     
-    def __init__(self, job_service=None):
+    def __init__(self, job_service=None, vector_store_service=None):
         """Initialize the analysis service."""
         # Track status: root_path -> file_path -> status
         self.status: Dict[str, Dict[str, AnalysisStatus]] = {}
@@ -43,6 +44,8 @@ class AnalysisService:
         self.processing_task: Optional[asyncio.Task] = None
         # Job service reference
         self.job_service = job_service
+        # Vector store service reference
+        self.vector_store_service = vector_store_service
     
     def queue_file_analysis(
         self, root_path: Path, file_path: Path, job_id: Optional[str] = None
@@ -131,6 +134,19 @@ class AnalysisService:
                         self.status[root_str][rel_path] = AnalysisStatus.ANALYZED
                         if root_str in self.errors and rel_path in self.errors[root_str]:
                             del self.errors[root_str][rel_path]
+                        
+                        # Add to vector store
+                        if self.vector_store_service:
+                            try:
+                                # Convert FinalFileRecord to dict for metadata
+                                metadata = result.model_dump(mode='json')
+                                self.vector_store_service.add_document(
+                                    file_path=file_path,
+                                    root_path=root_path,
+                                    metadata=metadata,
+                                )
+                            except Exception as e:
+                                print(f"  ⚠️  Error adding to vector store: {e}")
                         
                         # Update job
                         if job_id and self.job_service:

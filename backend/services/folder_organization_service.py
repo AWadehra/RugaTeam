@@ -23,12 +23,13 @@ from ruga_file_handler import load_ruga_metadata, find_all_ruga_files
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from models.folder_structure_schemas import FolderStructure, FileMove
+from services.vector_store_service import VectorStoreService
 
 
 class FolderOrganizationService:
     """Service for generating and applying folder structures."""
     
-    def __init__(self):
+    def __init__(self, vector_store_service: Optional[VectorStoreService] = None):
         """Initialize the folder organization service."""
         # Store generated structures: structure_id -> FolderStructure
         self.structures: Dict[str, FolderStructure] = {}
@@ -41,6 +42,9 @@ class FolderOrganizationService:
             temperature=0,
         )
         self.structured_llm = self.llm.with_structured_output(FolderStructure)
+        
+        # Vector store service reference
+        self.vector_store_service = vector_store_service
     
     async def collect_ruga_metadata(self, root_path: Path) -> List[Dict[str, Any]]:
         """
@@ -226,6 +230,34 @@ Generate a folder structure that organizes these {len(file_summaries)} files log
                     if ruga_source.exists():
                         ruga_dest = dest_path.with_suffix(dest_path.suffix + ".ruga")
                         shutil.copy2(ruga_source, ruga_dest)
+                    
+                    # Update vector store with new path
+                    if self.vector_store_service:
+                        try:
+                            # Load .ruga metadata if available for the new file
+                            ruga_metadata = None
+                            ruga_dest = dest_path.with_suffix(dest_path.suffix + ".ruga")
+                            if ruga_dest.exists():
+                                try:
+                                    from ruga_file_handler import load_ruga_metadata
+                                    ruga_metadata = load_ruga_metadata(dest_path)
+                                    if ruga_metadata:
+                                        ruga_metadata = ruga_metadata.model_dump(mode='json')
+                                except Exception:
+                                    pass
+                            
+                            # Update document path in vector store
+                            # old_path is relative to original_root, new_path is relative to new_root
+                            self.vector_store_service.update_document_path(
+                                old_path=source_path,
+                                new_path=dest_path,
+                                old_root_path=original_root,
+                                new_root_path=new_root,
+                                metadata=ruga_metadata,
+                            )
+                        except Exception as e:
+                            # Don't fail the whole operation if vector store update fails
+                            errors.append(f"Warning: Could not update vector store for {file_move.source_path}: {str(e)}")
                     
                     files_copied += 1
                 except Exception as e:

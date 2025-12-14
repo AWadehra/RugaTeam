@@ -32,6 +32,7 @@ from services.file_service import FileService
 from services.analysis_service import AnalysisService
 from services.job_service import JobService
 from services.folder_organization_service import FolderOrganizationService
+from services.vector_store_service import VectorStoreService
 from models.schemas import (
     FileInfo,
     FileListResponse,
@@ -57,18 +58,22 @@ file_service: Optional[FileService] = None
 analysis_service: Optional[AnalysisService] = None
 job_service: Optional[JobService] = None
 folder_org_service: Optional[FolderOrganizationService] = None
+vector_store_service: Optional[VectorStoreService] = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize and cleanup services."""
-    global file_service, analysis_service, job_service, folder_org_service
+    global file_service, analysis_service, job_service, folder_org_service, vector_store_service
     
     # Initialize services
     job_service = JobService()
     file_service = FileService()
-    analysis_service = AnalysisService(job_service=job_service)
-    folder_org_service = FolderOrganizationService()
+    vector_store_service = VectorStoreService()
+    analysis_service = AnalysisService(job_service=job_service, vector_store_service=vector_store_service)
+    folder_org_service = FolderOrganizationService(vector_store_service=vector_store_service)
+    
+    print(f"✓ Vector store initialized with {vector_store_service.get_document_count()} documents")
     
     yield
     
