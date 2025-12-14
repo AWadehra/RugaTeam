@@ -10,6 +10,7 @@ from openai import OpenAI
 
 # import pymupdf
 from pptx import Presentation
+from docx import Document
 from sentence_transformers import SentenceTransformer
 
 from langchain.tools import tool
@@ -42,6 +43,17 @@ def extract_pptx(path):
                 text.append(shape.text)
     return " ".join(text)
 
+def extract_docx(path):
+      doc = Document(path)
+      text = []
+      for para in doc.paragraphs:
+          text.append(para.text)
+      # Also get text from tables
+      for table in doc.tables:
+          for row in table.rows:
+              for cell in row.cells:
+                  text.append(cell.text)
+      return "\n".join(text)
 
 def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]:
     # Try to break at sentence ends instead of mid-word
@@ -156,6 +168,8 @@ for file in data_folder.iterdir():
         text = extract_pdf(file)
     elif file.suffix == ".pptx":
         text = extract_pptx(file)
+    elif file.suffix == ".docx":
+        text = extract_docx(file)
     else:
         continue
 
@@ -184,9 +198,12 @@ def retrieve_context(query: str):
     metadatas = results["metadatas"][0]
 
     serialized = "\n\n".join(
-        f"Source: {meta.get('title', 'Unknown')}\nContent: {doc}"
-        for doc, meta in zip(docs, metadatas)
-    )
+            f"[Source: {meta.get('title')} | Category: {meta.get('categories')} | Authors: {meta.get('authors')}]\n"
+            f"Summary: {meta.get('summary', 'N/A')}\n"
+            f"Content: {doc}"
+            for doc, meta in zip(docs, metadatas)
+        )
+    
     return serialized, results
 
 from langchain.agents import create_agent
@@ -194,9 +211,15 @@ from langchain.agents import create_agent
 tools = [retrieve_context]
 # If desired, specify custom instructions
 prompt = (
-    "You have access to a tool that retrieves context and tells which document the query asked should refer to. Then the particular document get's added to memory and the user can chat with it."
-    "Use the tool to help answer user queries."
-)
+      "You are a research assistant for clinical epidemiology. "
+      "You have access to a retrieval tool that searches indexed documents. "
+      "\n\nRULES:"
+      "\n1. ALWAYS use the retrieve_context tool before answering questions."
+      "\n2. ALWAYS cite your sources by name at the end of your response."
+      "\n3. If multiple sources are used, list all of them."
+      "\n4. Format citations as: [Source: document_name]"
+      "\n5. If the retrieved context doesn't answer the question, say so."
+  )
 
 agent = create_agent(model, tools, system_prompt=prompt)
 
