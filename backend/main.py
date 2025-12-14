@@ -37,7 +37,7 @@ from models.schemas import (
     AnalyzeFolderRequest,
     AnalyzeFileRequest,
     AnalyzeResponse,
-    StatusResponse,
+    JobInfo,
     JobListResponse,
     AnalysisStatus,
     JobType,
@@ -93,8 +93,8 @@ async def root():
             "GET /files": "List all files and folders with .ruga status",
             "POST /analyze/folder": "Start analyzing a folder",
             "POST /analyze/file": "Start analyzing a single file",
-            "GET /jobs": "List all analysis jobs",
-            "GET /status/{file_path}": "Get analysis status for a file",
+            "GET /jobs": "List all analysis jobs (folder and file jobs)",
+            "GET /jobs/{job_id}": "Get detailed job information with file statuses",
         },
     }
 
@@ -267,47 +267,44 @@ async def analyze_file(request: AnalyzeFileRequest):
 
 
 @app.get("/jobs", response_model=JobListResponse)
-async def list_jobs():
+async def list_jobs(include_file_statuses: bool = False):
     """
     List all analysis jobs with their status.
     
     Returns all jobs (both folder and file analysis jobs) with their current status.
+    You can see both folder analysis jobs and file analysis jobs here.
+    
+    Query Parameters:
+    - include_file_statuses: If True, includes individual file statuses for each job (default: False)
     """
     try:
-        jobs = await job_service.list_jobs()
+        jobs = await job_service.list_jobs(include_file_statuses=include_file_statuses)
         return JobListResponse(jobs=jobs)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing jobs: {str(e)}")
 
 
-@app.get("/status/{file_path:path}", response_model=StatusResponse)
-async def get_status(file_path: str, root_path: str):
+@app.get("/jobs/{job_id}", response_model=JobInfo)
+async def get_job(job_id: str):
     """
-    Get the analysis status for a specific file.
+    Get detailed information about a specific job, including individual file statuses.
     
-    Status can be: 'analyzed', 'in_process', 'error', or 'not_found'
+    This is useful for checking the status of all files in a folder analysis job.
     """
     try:
-        root = Path(root_path)
-        if not root.exists():
-            raise HTTPException(status_code=404, detail=f"Root path does not exist: {root_path}")
+        job = await job_service.get_job(job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
         
-        full_path = root / file_path
-        if not full_path.exists():
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        # Get file statuses for this job
+        file_statuses = await job_service.get_job_files_status(job_id)
+        job.file_statuses = file_statuses
         
-        status, error_message = await analysis_service.get_file_status(root, full_path)
-        
-        return StatusResponse(
-            file_path=file_path,
-            root_path=str(root.absolute()),
-            status=status,
-            error_message=error_message,
-        )
+        return job
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error getting status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting job: {str(e)}")
 
 
 if __name__ == "__main__":

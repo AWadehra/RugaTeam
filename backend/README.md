@@ -133,7 +133,10 @@ Start analyzing a single file and generating a .ruga file as a background task.
 
 ### GET `/jobs`
 
-List all analysis jobs with their status.
+List all analysis jobs with their status. This is the primary way to check the status of both folder and file analysis jobs.
+
+**Query Parameters:**
+- `include_file_statuses` (optional, default: false): If true, includes individual file statuses for each job
 
 **Response:**
 ```json
@@ -149,7 +152,12 @@ List all analysis jobs with their status.
       "files_processed": 2,
       "files_failed": 0,
       "created_at": "2024-01-01T12:00:00",
-      "error_message": null
+      "error_message": null,
+      "file_statuses": {
+        "file1.txt": "analyzed",
+        "file2.txt": "in_process",
+        "file3.txt": "pending"
+      }
     },
     {
       "job_id": "660e8400-e29b-41d4-a716-446655440001",
@@ -161,31 +169,49 @@ List all analysis jobs with their status.
       "files_processed": 1,
       "files_failed": 0,
       "created_at": "2024-01-01T11:00:00",
-      "error_message": null
+      "error_message": null,
+      "file_statuses": {
+        "file.txt": "analyzed"
+      }
     }
   ]
 }
 ```
 
-### GET `/status/{file_path}?root_path=<path>`
+**Note:** The `file_statuses` field is only included if `include_file_statuses=true` is set in the query parameters.
 
-Get the analysis status for a specific file.
+### GET `/jobs/{job_id}`
+
+Get detailed information about a specific job, including individual file statuses. Useful for checking the status of all files in a folder analysis job.
 
 **Path Parameters:**
-- `file_path`: Relative path to the file (from root_path)
-
-**Query Parameters:**
-- `root_path` (required): Root directory path
+- `job_id`: The job ID returned when starting an analysis
 
 **Response:**
 ```json
 {
-  "file_path": "relative/path/to/file.txt",
+  "job_id": "550e8400-e29b-41d4-a716-446655440000",
+  "job_type": "folder",
   "root_path": "/absolute/path/to/root",
-  "status": "analyzed",  // One of: "analyzed", "in_process", "error", "not_found", "pending"
-  "error_message": null  // Only present if status is "error"
+  "target_path": "/absolute/path/to/root",
+  "status": "in_process",
+  "files_queued": 5,
+  "files_processed": 2,
+  "files_failed": 0,
+  "created_at": "2024-01-01T12:00:00",
+  "error_message": null,
+  "file_statuses": {
+    "file1.txt": "analyzed",
+    "file2.txt": "in_process",
+    "file3.txt": "pending",
+    "file4.txt": "error"
+  }
 }
 ```
+
+**Job Types:**
+- `folder`: Job for analyzing all files in a folder
+- `file`: Job for analyzing a single file
 
 **Status Values:**
 - `analyzed`: File has been analyzed and .ruga file exists
@@ -193,10 +219,6 @@ Get the analysis status for a specific file.
 - `error`: Analysis failed (check error_message)
 - `not_found`: File not found or not queued for analysis
 - `pending`: File is queued but not yet started
-
-**Job Types:**
-- `folder`: Job for analyzing all files in a folder
-- `file`: Job for analyzing a single file
 
 ## Example Usage
 
@@ -238,13 +260,17 @@ curl -X POST "http://localhost:8000/analyze/file" \
 ### List all jobs
 
 ```bash
+# List all jobs (summary)
 curl "http://localhost:8000/jobs"
+
+# List all jobs with individual file statuses
+curl "http://localhost:8000/jobs?include_file_statuses=true"
 ```
 
-### Check analysis status
+### Get specific job details
 
 ```bash
-curl "http://localhost:8000/status/file1.txt?root_path=/path/to/examples/unstructured_folder"
+curl "http://localhost:8000/jobs/550e8400-e29b-41d4-a716-446655440000"
 ```
 
 ## API Documentation

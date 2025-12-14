@@ -121,10 +121,20 @@ class JobService:
         async with self.lock:
             return self.jobs.get(job_id)
     
-    async def list_jobs(self) -> List[JobInfo]:
-        """List all jobs."""
+    async def list_jobs(self, include_file_statuses: bool = False) -> List[JobInfo]:
+        """
+        List all jobs.
+        
+        Args:
+            include_file_statuses: If True, include individual file statuses for each job
+        """
         async with self.lock:
-            return list(self.jobs.values())
+            jobs = list(self.jobs.values())
+            if include_file_statuses:
+                # Add file statuses to each job
+                for job in jobs:
+                    job.file_statuses = self.job_file_status.get(job.job_id, {}).copy()
+            return jobs
     
     async def get_job_files_status(self, job_id: str) -> Dict[str, AnalysisStatus]:
         """Get status of all files in a job."""

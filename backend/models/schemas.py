@@ -80,6 +80,7 @@ class JobInfo(BaseModel):
     files_failed: int
     created_at: str
     error_message: Optional[str] = None
+    file_statuses: Optional[Dict[str, AnalysisStatus]] = None  # Status of individual files in the job
 
 
 class JobListResponse(BaseModel):
