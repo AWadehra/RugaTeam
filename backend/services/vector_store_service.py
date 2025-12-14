@@ -313,8 +313,9 @@ class VectorStoreService:
             
             # Get all documents - we'll filter in Python since categories are stored as string representations
             # First, get all documents with embeddings
+            # IDs are returned by default, so we don't need to include them
             all_results = collection.get(
-                include=["documents", "metadatas", "embeddings", "ids"],
+                include=["documents", "metadatas", "embeddings"],
             )
             
             if not all_results or not all_results.get("ids"):
@@ -342,23 +343,26 @@ class VectorStoreService:
                                 filtered_ids.append(all_results["ids"][i])
                                 filtered_documents.append(all_results["documents"][i])
                                 filtered_metadatas.append(metadata)
-                                if all_results.get("embeddings"):
-                                    filtered_embeddings.append(all_results["embeddings"][i])
+                                embeddings_list = all_results.get("embeddings")
+                                if embeddings_list is not None and i < len(embeddings_list):
+                                    filtered_embeddings.append(embeddings_list[i])
                         elif isinstance(categories_list, str):
                             if category.lower() in categories_list.lower():
                                 filtered_ids.append(all_results["ids"][i])
                                 filtered_documents.append(all_results["documents"][i])
                                 filtered_metadatas.append(metadata)
-                                if all_results.get("embeddings"):
-                                    filtered_embeddings.append(all_results["embeddings"][i])
+                                embeddings_list = all_results.get("embeddings")
+                                if embeddings_list is not None and i < len(embeddings_list):
+                                    filtered_embeddings.append(embeddings_list[i])
                     except (ValueError, SyntaxError):
                         # If parsing fails, do simple string contains check
                         if category.lower() in categories_str.lower():
                             filtered_ids.append(all_results["ids"][i])
                             filtered_documents.append(all_results["documents"][i])
                             filtered_metadatas.append(metadata)
-                            if all_results.get("embeddings"):
-                                filtered_embeddings.append(all_results["embeddings"][i])
+                            embeddings_list = all_results.get("embeddings")
+                            if embeddings_list is not None and i < len(embeddings_list):
+                                filtered_embeddings.append(embeddings_list[i])
             
             if not filtered_ids:
                 return []
@@ -381,19 +385,38 @@ class VectorStoreService:
                 filtered_metadatas = results.get("metadatas", [])
                 filtered_documents = results.get("documents", [])
                 
-                if not filtered_embeddings:
-                    # If no embeddings, compute them (shouldn't happen, but handle it)
-                    return []
+                # Check if we have embeddings (check length, not truthiness to avoid numpy array issues)
+                if not filtered_embeddings or len(filtered_embeddings) == 0:
+                    # If no embeddings, just return filtered documents without similarity ranking
+                    docs = []
+                    for i, doc_text in enumerate(filtered_documents):
+                        doc = Document(
+                            page_content=doc_text,
+                            metadata=filtered_metadatas[i] if filtered_metadatas and i < len(filtered_metadatas) else {},
+                        )
+                        docs.append(doc)
+                    return docs[:k]
                 
                 # Compute similarities
                 import numpy as np
-                query_vec = np.array(query_embedding)
-                doc_embeddings = np.array(filtered_embeddings)
+                query_vec = np.array(query_embedding, dtype=np.float32)
+                doc_embeddings = np.array(filtered_embeddings, dtype=np.float32)
+                
+                # Ensure doc_embeddings is 2D
+                if doc_embeddings.ndim == 1:
+                    doc_embeddings = doc_embeddings.reshape(1, -1)
                 
                 # Compute cosine similarities
-                similarities = np.dot(doc_embeddings, query_vec) / (
-                    np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_vec)
-                )
+                # Normalize vectors
+                query_norm = np.linalg.norm(query_vec)
+                doc_norms = np.linalg.norm(doc_embeddings, axis=1)
+                
+                # Avoid division by zero
+                doc_norms = np.where(doc_norms == 0, 1, doc_norms)
+                query_norm = query_norm if query_norm != 0 else 1
+                
+                # Compute dot products and normalize
+                similarities = np.dot(doc_embeddings, query_vec) / (doc_norms * query_norm)
                 
                 # Get top k
                 top_indices = np.argsort(similarities)[::-1][:k]
@@ -403,7 +426,7 @@ class VectorStoreService:
                 for idx in top_indices:
                     doc = Document(
                         page_content=filtered_documents[idx],
-                        metadata=filtered_metadatas[idx] if filtered_metadatas else {},
+                        metadata=filtered_metadatas[idx] if filtered_metadatas and idx < len(filtered_metadatas) else {},
                     )
                     docs.append(doc)
                 
@@ -440,8 +463,9 @@ class VectorStoreService:
             collection = self.vector_store._collection
             
             # Get all documents - we'll filter in Python since topics are stored as string representations
+            # IDs are returned by default, so we don't need to include them
             all_results = collection.get(
-                include=["documents", "metadatas", "embeddings", "ids"],
+                include=["documents", "metadatas", "embeddings"],
             )
             
             if not all_results or not all_results.get("ids"):
@@ -465,22 +489,25 @@ class VectorStoreService:
                                 filtered_ids.append(all_results["ids"][i])
                                 filtered_documents.append(all_results["documents"][i])
                                 filtered_metadatas.append(metadata)
-                                if all_results.get("embeddings"):
-                                    filtered_embeddings.append(all_results["embeddings"][i])
+                                embeddings_list = all_results.get("embeddings")
+                                if embeddings_list is not None and i < len(embeddings_list):
+                                    filtered_embeddings.append(embeddings_list[i])
                         elif isinstance(topics_list, str):
                             if topic.lower() in topics_list.lower():
                                 filtered_ids.append(all_results["ids"][i])
                                 filtered_documents.append(all_results["documents"][i])
                                 filtered_metadatas.append(metadata)
-                                if all_results.get("embeddings"):
-                                    filtered_embeddings.append(all_results["embeddings"][i])
+                                embeddings_list = all_results.get("embeddings")
+                                if embeddings_list is not None and i < len(embeddings_list):
+                                    filtered_embeddings.append(embeddings_list[i])
                     except (ValueError, SyntaxError):
                         if topic.lower() in topics_str.lower():
                             filtered_ids.append(all_results["ids"][i])
                             filtered_documents.append(all_results["documents"][i])
                             filtered_metadatas.append(metadata)
-                            if all_results.get("embeddings"):
-                                filtered_embeddings.append(all_results["embeddings"][i])
+                            embeddings_list = all_results.get("embeddings")
+                            if embeddings_list is not None and i < len(embeddings_list):
+                                filtered_embeddings.append(embeddings_list[i])
             
             if not filtered_ids:
                 return []
@@ -499,22 +526,42 @@ class VectorStoreService:
                 filtered_documents = results.get("documents", [])
                 filtered_metadatas = results.get("metadatas", [])
                 
-                if not filtered_embeddings:
-                    return []
+                # Check if we have embeddings (check length, not truthiness to avoid numpy array issues)
+                if not filtered_embeddings or len(filtered_embeddings) == 0:
+                    # If no embeddings, just return filtered documents without similarity ranking
+                    docs = []
+                    for i, doc_text in enumerate(filtered_documents):
+                        doc = Document(
+                            page_content=doc_text,
+                            metadata=filtered_metadatas[i] if filtered_metadatas and i < len(filtered_metadatas) else {},
+                        )
+                        docs.append(doc)
+                    return docs[:k]
                 
                 import numpy as np
-                query_vec = np.array(query_embedding)
-                doc_embeddings = np.array(filtered_embeddings)
-                similarities = np.dot(doc_embeddings, query_vec) / (
-                    np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_vec)
-                )
+                query_vec = np.array(query_embedding, dtype=np.float32)
+                doc_embeddings = np.array(filtered_embeddings, dtype=np.float32)
+                
+                # Ensure doc_embeddings is 2D
+                if doc_embeddings.ndim == 1:
+                    doc_embeddings = doc_embeddings.reshape(1, -1)
+                
+                # Compute cosine similarities with proper normalization
+                query_norm = np.linalg.norm(query_vec)
+                doc_norms = np.linalg.norm(doc_embeddings, axis=1)
+                
+                # Avoid division by zero
+                doc_norms = np.where(doc_norms == 0, 1, doc_norms)
+                query_norm = query_norm if query_norm != 0 else 1
+                
+                similarities = np.dot(doc_embeddings, query_vec) / (doc_norms * query_norm)
                 top_indices = np.argsort(similarities)[::-1][:k]
                 
                 docs = []
                 for idx in top_indices:
                     doc = Document(
                         page_content=filtered_documents[idx],
-                        metadata=filtered_metadatas[idx] if filtered_metadatas else {},
+                        metadata=filtered_metadatas[idx] if filtered_metadatas and idx < len(filtered_metadatas) else {},
                     )
                     docs.append(doc)
                 
@@ -550,8 +597,9 @@ class VectorStoreService:
             collection = self.vector_store._collection
             
             # Get all documents - we'll filter in Python since tags are stored as string representations
+            # IDs are returned by default, so we don't need to include them
             all_results = collection.get(
-                include=["documents", "metadatas", "embeddings", "ids"],
+                include=["documents", "metadatas", "embeddings"],
             )
             
             if not all_results or not all_results.get("ids"):
@@ -575,22 +623,25 @@ class VectorStoreService:
                                 filtered_ids.append(all_results["ids"][i])
                                 filtered_documents.append(all_results["documents"][i])
                                 filtered_metadatas.append(metadata)
-                                if all_results.get("embeddings"):
-                                    filtered_embeddings.append(all_results["embeddings"][i])
+                                embeddings_list = all_results.get("embeddings")
+                                if embeddings_list is not None and i < len(embeddings_list):
+                                    filtered_embeddings.append(embeddings_list[i])
                         elif isinstance(tags_list, str):
                             if tag.lower() in tags_list.lower():
                                 filtered_ids.append(all_results["ids"][i])
                                 filtered_documents.append(all_results["documents"][i])
                                 filtered_metadatas.append(metadata)
-                                if all_results.get("embeddings"):
-                                    filtered_embeddings.append(all_results["embeddings"][i])
+                                embeddings_list = all_results.get("embeddings")
+                                if embeddings_list is not None and i < len(embeddings_list):
+                                    filtered_embeddings.append(embeddings_list[i])
                     except (ValueError, SyntaxError):
                         if tag.lower() in tags_str.lower():
                             filtered_ids.append(all_results["ids"][i])
                             filtered_documents.append(all_results["documents"][i])
                             filtered_metadatas.append(metadata)
-                            if all_results.get("embeddings"):
-                                filtered_embeddings.append(all_results["embeddings"][i])
+                            embeddings_list = all_results.get("embeddings")
+                            if embeddings_list is not None and i < len(embeddings_list):
+                                filtered_embeddings.append(embeddings_list[i])
             
             if not filtered_ids:
                 return []
@@ -609,22 +660,42 @@ class VectorStoreService:
                 filtered_documents = results.get("documents", [])
                 filtered_metadatas = results.get("metadatas", [])
                 
-                if not filtered_embeddings:
-                    return []
+                # Check if we have embeddings (check length, not truthiness to avoid numpy array issues)
+                if not filtered_embeddings or len(filtered_embeddings) == 0:
+                    # If no embeddings, just return filtered documents without similarity ranking
+                    docs = []
+                    for i, doc_text in enumerate(filtered_documents):
+                        doc = Document(
+                            page_content=doc_text,
+                            metadata=filtered_metadatas[i] if filtered_metadatas and i < len(filtered_metadatas) else {},
+                        )
+                        docs.append(doc)
+                    return docs[:k]
                 
                 import numpy as np
-                query_vec = np.array(query_embedding)
-                doc_embeddings = np.array(filtered_embeddings)
-                similarities = np.dot(doc_embeddings, query_vec) / (
-                    np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_vec)
-                )
+                query_vec = np.array(query_embedding, dtype=np.float32)
+                doc_embeddings = np.array(filtered_embeddings, dtype=np.float32)
+                
+                # Ensure doc_embeddings is 2D
+                if doc_embeddings.ndim == 1:
+                    doc_embeddings = doc_embeddings.reshape(1, -1)
+                
+                # Compute cosine similarities with proper normalization
+                query_norm = np.linalg.norm(query_vec)
+                doc_norms = np.linalg.norm(doc_embeddings, axis=1)
+                
+                # Avoid division by zero
+                doc_norms = np.where(doc_norms == 0, 1, doc_norms)
+                query_norm = query_norm if query_norm != 0 else 1
+                
+                similarities = np.dot(doc_embeddings, query_vec) / (doc_norms * query_norm)
                 top_indices = np.argsort(similarities)[::-1][:k]
                 
                 docs = []
                 for idx in top_indices:
                     doc = Document(
                         page_content=filtered_documents[idx],
-                        metadata=filtered_metadatas[idx] if filtered_metadatas else {},
+                        metadata=filtered_metadatas[idx] if filtered_metadatas and idx < len(filtered_metadatas) else {},
                     )
                     docs.append(doc)
                 
