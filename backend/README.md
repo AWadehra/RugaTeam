@@ -220,6 +220,78 @@ Get detailed information about a specific job, including individual file statuse
 - `not_found`: File not found or not queued for analysis
 - `pending`: File is queued but not yet started
 
+### POST `/organize/generate`
+
+Generate an organized folder structure suggestion using LLM with structured output.
+
+Analyzes all .ruga files in the root path and suggests a new folder organization based on categories, dates, topics, and tags. The structure is organized by academic year and category.
+
+**Request Body:**
+```json
+{
+  "root_path": "/path/to/root/directory"
+}
+```
+
+**Response:**
+```json
+{
+  "structure_id": "550e8400-e29b-41d4-a716-446655440000",
+  "root_path": "/absolute/path/to/root",
+  "structure": {
+    "root_folder_name": "Organized_Documents",
+    "folders": [
+      "Education/Capita-Selecta/2023",
+      "Education/Capita-Selecta/2024",
+      "Research/2023",
+      "Research/2024",
+      "Workshops/2024"
+    ],
+    "file_moves": [
+      {
+        "source_path": "2023/survival_analysis_nov2023.txt",
+        "destination_path": "Research/2023/survival_analysis_nov2023.txt",
+        "reason": "Research category, created in 2023"
+      },
+      {
+        "source_path": "Education/capita_selecta_2024_q1.txt",
+        "destination_path": "Education/Capita-Selecta/2024/capita_selecta_2024_q1.txt",
+        "reason": "Education/Capita Selecta category, created in 2024"
+      }
+    ],
+    "organization_rationale": "Files organized by primary category and academic year for better discoverability"
+  },
+  "total_files": 15
+}
+```
+
+### POST `/organize/apply`
+
+Apply a folder structure by creating folders and copying files.
+
+Creates a new root folder with UUID prefix and copies all files to their suggested locations. Each application creates a new folder so you can compare different organization attempts.
+
+**Request Body:**
+```json
+{
+  "structure_id": "550e8400-e29b-41d4-a716-446655440000",
+  "dry_run": false
+}
+```
+
+**Response:**
+```json
+{
+  "structure_id": "550e8400-e29b-41d4-a716-446655440000",
+  "new_root_path": "/path/to/550e8400_Organized_Documents",
+  "files_copied": 15,
+  "folders_created": 5,
+  "errors": []
+}
+```
+
+**Note:** The new folder is created with a UUID prefix (first 8 characters) followed by the suggested root folder name, allowing you to create multiple organized versions for comparison.
+
 ## Example Usage
 
 ### List files in a directory
@@ -272,6 +344,40 @@ curl "http://localhost:8000/jobs?include_file_statuses=true"
 ```bash
 curl "http://localhost:8000/jobs/550e8400-e29b-41d4-a716-446655440000"
 ```
+
+### Generate organized folder structure
+
+```bash
+curl -X POST "http://localhost:8000/organize/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "root_path": "/path/to/examples/unstructured_folder"
+  }'
+```
+
+This will analyze all .ruga files and use LLM with structured output to suggest an organized folder structure organized by category and academic year.
+
+### Apply folder structure
+
+```bash
+# Dry run (see what would be done)
+curl -X POST "http://localhost:8000/organize/apply" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "structure_id": "550e8400-e29b-41d4-a716-446655440000",
+    "dry_run": true
+  }'
+
+# Actually apply the structure
+curl -X POST "http://localhost:8000/organize/apply" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "structure_id": "550e8400-e29b-41d4-a716-446655440000",
+    "dry_run": false
+  }'
+```
+
+Each application creates a new folder with UUID prefix so you can compare different organization attempts.
 
 ## API Documentation
 

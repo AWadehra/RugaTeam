@@ -31,6 +31,7 @@ if str(BACKEND_DIR) not in sys.path:
 from services.file_service import FileService
 from services.analysis_service import AnalysisService
 from services.job_service import JobService
+from services.folder_organization_service import FolderOrganizationService
 from models.schemas import (
     FileInfo,
     FileListResponse,
@@ -42,22 +43,30 @@ from models.schemas import (
     AnalysisStatus,
     JobType,
 )
+from models.folder_structure_schemas import (
+    GenerateStructureRequest,
+    FolderStructureResponse,
+    ApplyStructureRequest,
+    ApplyStructureResponse,
+)
 
 # Global services
 file_service: Optional[FileService] = None
 analysis_service: Optional[AnalysisService] = None
 job_service: Optional[JobService] = None
+folder_org_service: Optional[FolderOrganizationService] = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize and cleanup services."""
-    global file_service, analysis_service, job_service
+    global file_service, analysis_service, job_service, folder_org_service
     
     # Initialize services
     job_service = JobService()
     file_service = FileService()
     analysis_service = AnalysisService(job_service=job_service)
+    folder_org_service = FolderOrganizationService()
     
     yield
     
@@ -95,6 +104,8 @@ async def root():
             "POST /analyze/file": "Start analyzing a single file",
             "GET /jobs": "List all analysis jobs (folder and file jobs)",
             "GET /jobs/{job_id}": "Get detailed job information with file statuses",
+            "POST /organize/generate": "Generate organized folder structure using LLM",
+            "POST /organize/apply": "Apply folder structure by copying files",
         },
     }
 
@@ -305,6 +316,91 @@ async def get_job(job_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting job: {str(e)}")
+
+
+@app.post("/organize/generate", response_model=FolderStructureResponse)
+async def generate_folder_structure(request: GenerateStructureRequest):
+    """
+    Generate an organized folder structure suggestion using LLM with structured output.
+    
+    Analyzes all .ruga files in the root path and suggests a new folder organization
+    based on categories, dates, topics, and tags. The structure is organized by
+    academic year and category.
+    
+    Request Body:
+    - root_path: Path to the root directory containing .ruga files
+    """
+    try:
+        root = Path(request.root_path)
+        if not root.exists():
+            raise HTTPException(status_code=404, detail=f"Root path does not exist: {request.root_path}")
+        if not root.is_dir():
+            raise HTTPException(status_code=400, detail=f"Path is not a directory: {request.root_path}")
+        
+        # Generate structure
+        structure_id, structure = await folder_org_service.generate_folder_structure(root)
+        
+        # Count total files
+        total_files = len(structure.file_moves)
+        
+        return FolderStructureResponse(
+            structure_id=structure_id,
+            root_path=str(root.absolute()),
+            structure=structure,
+            total_files=total_files,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating folder structure: {str(e)}")
+
+
+@app.post("/organize/apply", response_model=ApplyStructureResponse)
+async def apply_folder_structure(request: ApplyStructureRequest):
+    """
+    Apply a folder structure by creating folders and copying files.
+    
+    Creates a new root folder with UUID prefix and copies all files to their
+    suggested locations. Each application creates a new folder so you can
+    compare different organization attempts.
+    
+    Request Body:
+    - structure_id: UUID of the structure to apply (from /organize/generate)
+    - dry_run: If true, only show what would be done without actually copying
+    """
+    try:
+        structure_id = request.structure_id
+        
+        if structure_id not in folder_org_service.structures:
+            raise HTTPException(status_code=404, detail=f"Structure not found: {structure_id}")
+        
+        # Get original root path
+        original_root_str = folder_org_service.structure_roots.get(structure_id)
+        if not original_root_str:
+            raise HTTPException(status_code=404, detail=f"Root path not found for structure: {structure_id}")
+        
+        original_root = Path(original_root_str)
+        if not original_root.exists():
+            raise HTTPException(status_code=404, detail=f"Original root path no longer exists: {original_root_str}")
+        
+        # Apply structure
+        new_root_path, files_copied, folders_created, errors = await folder_org_service.apply_folder_structure(
+            structure_id, original_root, dry_run=request.dry_run
+        )
+        
+        return ApplyStructureResponse(
+            structure_id=structure_id,
+            new_root_path=new_root_path,
+            files_copied=files_copied,
+            folders_created=folders_created,
+            errors=errors,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error applying folder structure: {str(e)}")
 
 
 if __name__ == "__main__":
