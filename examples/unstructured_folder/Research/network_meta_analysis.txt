@@ -1,0 +1,16 @@
+Research Meeting – Network Meta-Analysis
+Date: April 25, 2024
+Speaker: Dr. Mark van Dijk
+Department: Clinical Epidemiology
+
+Introduction to network meta-analysis for comparing multiple treatments.
+
+Topics:
+- Network meta-analysis vs. pairwise meta-analysis
+- Network geometry and consistency
+- Statistical models (fixed vs. random effects)
+- Ranking treatments
+- Software (R, Stata, WinBUGS)
+
+Case study: Comparing different statin regimens for cardiovascular prevention.
+

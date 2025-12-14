@@ -1,0 +1,12 @@
+Capita Selecta Series – Q1 2024
+Department: Clinical Epidemiology
+
+Session 1: Machine Learning in Epidemiology (March 15, 2024)
+Speaker: Dr. Sarah van der Berg
+
+Session 2: Systematic Review Methods (April 12, 2024)
+Speaker: Prof. Maria Janssen
+
+Session 3: Causal Inference in Observational Studies (May 10, 2024)
+Speaker: Dr. Pieter de Vries
+

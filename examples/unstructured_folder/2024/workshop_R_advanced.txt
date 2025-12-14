@@ -1,0 +1,16 @@
+Workshop – Advanced R Programming for Epidemiology
+Date: September 12, 2024
+Speaker: Dr. Lisa Chen
+Department: Clinical Epidemiology
+
+Hands-on workshop covering advanced R programming techniques for epidemiological analysis.
+
+Topics:
+- Data manipulation with dplyr and data.table
+- Creating publication-quality figures with ggplot2
+- Reproducible research with R Markdown
+- Package development basics
+- Performance optimization
+
+Prerequisites: Basic R knowledge required.
+

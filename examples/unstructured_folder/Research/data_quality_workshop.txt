@@ -1,0 +1,17 @@
+Workshop – Data Quality in Clinical Research
+Date: July 20, 2024
+Speaker: Dr. Sophie van der Berg
+Department: Clinical Epidemiology
+
+Workshop on ensuring data quality throughout the research process.
+
+Topics:
+- Data collection best practices
+- Data validation and cleaning
+- Quality control procedures
+- Common data quality issues
+- Tools for data quality assessment
+- Documentation and metadata
+
+Hands-on exercises with real datasets.
+

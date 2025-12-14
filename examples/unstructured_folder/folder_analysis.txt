@@ -1,0 +1,56 @@
+================================================================================
+Folder Structure: unstructured_folder
+Full Path: /Users/mperini/Projects/RugaTeam/examples/unstructured_folder
+================================================================================
+
+📊 Statistics:
+  📁 Total folders: 9
+  📄 Total files: 28
+
+📋 Files by type:
+  📝 .txt: 24
+  📄 .pdf: 4
+
+================================================================================
+Tree Structure:
+================================================================================
+
+├── 📁 2023/
+│   ├── 📝 missing_data_sept2023.txt
+│   ├── 📝 survival_analysis_nov2023.txt
+│   └── 📝 world_headlines_sept2023.txt
+├── 📁 2024/
+│   ├── 📝 ML_epidemiology_lecture.txt
+│   ├── 📝 causal_inference_may2024.txt
+│   ├── 📝 pharmacoepidemiology_seminar.txt
+│   └── 📝 workshop_R_advanced.txt
+├── 📁 Backup/
+│   ├── 📁 old_files/
+│   │   └── 📝 epi_methods_2022_backup.txt
+│   └── 📝 survival_analysis_talk.txt
+├── 📁 Education/
+│   ├── 📝 capita_selecta_2023_summary.txt
+│   └── 📝 capita_selecta_2024_q1.txt
+├── 📁 Misc/
+│   ├── 📝 presentation_draft.txt
+│   └── 📝 random_effects_models.txt
+├── 📁 Old Presentations/
+│   └── 📝 epi_methods_2022.txt
+├── 📁 Research/
+│   ├── 📝 cohort_study_design.txt
+│   ├── 📝 data_quality_workshop.txt
+│   ├── 📝 network_meta_analysis.txt
+│   └── 📝 systematic_review_methods.txt
+├── 📁 some_pdfs/
+│   ├── 📄 causal_inference_lecture.pdf
+│   ├── 📄 presentation_final_v2_FINAL.pdf
+│   ├── 📄 survival_analysis_talk.pdf
+│   └── 📄 systematic_review_methods.pdf
+├── 📝 causal_inference_lecture.txt
+├── 📝 clinical_trial_design.txt
+├── 📝 missing_data_handling.txt
+├── 📝 presentation_final.txt
+├── 📝 presentation_final_v2_FINAL.txt
+└── 📝 survival_analysis_talk.txt
+
+================================================================================

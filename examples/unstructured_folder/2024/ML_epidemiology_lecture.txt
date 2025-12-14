@@ -1,0 +1,7 @@
+Research Meeting – Machine Learning Applications
+Date: March 15, 2024
+Speaker: Dr. Sarah van der Berg
+ORCID: 0000-0001-2345-6789
+
+Presentation on machine learning methods for epidemiological research. Focus on predictive modeling in clinical settings.
+

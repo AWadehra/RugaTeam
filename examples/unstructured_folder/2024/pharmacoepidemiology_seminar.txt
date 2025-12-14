@@ -1,0 +1,17 @@
+Seminar – Pharmacoepidemiology Methods
+Date: October 3, 2024
+Speaker: Prof. Laura van der Berg
+ORCID: 0000-0005-6789-0123
+
+Introduction to pharmacoepidemiology and methods for studying drug effects in real-world populations.
+
+Topics:
+- Drug exposure assessment
+- Confounding by indication
+- Time-varying exposures
+- Drug-drug interactions
+- Safety signal detection
+- Real-world evidence
+
+Case studies from cardiovascular and diabetes medications.
+
