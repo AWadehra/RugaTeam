@@ -5,15 +5,26 @@ from datetime import datetime
 from uuid import uuid4
 import chromadb
 import pymupdf4llm
+import os
+from openai import OpenAI
 
 # import pymupdf
 from pptx import Presentation
 from sentence_transformers import SentenceTransformer
 
+from langchain.tools import tool
+from langchain_openai import ChatOpenAI
+from langchain.tools import tool
+
 # model = SentenceTransformer("all-MiniLM-L6-v2")
 client = chromadb.PersistentClient(path="./P2/chroma_db")
 collection = client.get_or_create_collection(name="documents")
 
+api_key = Path(".env/openai_key.txt").read_text().strip()
+os.environ["OPENAI_API_KEY"] = api_key
+
+model = ChatOpenAI(model="gpt-4o") #For talking
+openai_client = OpenAI() #For meta-data plus analysis
 
 def extract_pdf(path):
     # doc = pymupdf.open(path)
@@ -48,6 +59,15 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]
         chunks.append(text[start:end].strip())
         start = end - overlap if end < len(text) else end
     return [c for c in chunks if c]  # filter empty
+
+
+def llm_call(prompt: str) -> str:
+      response = openai_client.chat.completions.create(
+          model="gpt-4o",
+          response_format={"type":"json_object"},
+          messages=[{"role": "user", "content": prompt}]
+      )
+      return response.choices[0].message.content
 
 def llm_analysis(file, text):
     #"suggested_filename"
@@ -100,9 +120,7 @@ def llm_analysis(file, text):
     
     return json.loads(response)
     
-   
-
-
+    
 def create_metadata(file, text, chunk_no, analysis, file_id, content_hash):
     metadata = {
         "file_id": file_id,
@@ -154,6 +172,43 @@ for file in data_folder.iterdir():
         print(f"Indexed: {file.name}")
 
 # Result part
-results = collection.query(query_texts=["survival analysis"], n_results=3)
+# results = collection.query(query_texts=["survival analysis"], n_results=3)
+# print(results)
 
-print(results)
+@tool(response_format="content_and_artifact")
+def retrieve_context(query: str):
+    """Search documents about clinical epidemiology, research methods, statistics, and medical research."""
+    results = collection.query(query_texts=[query], n_results=3)
+
+    docs = results["documents"][0]
+    metadatas = results["metadatas"][0]
+
+    serialized = "\n\n".join(
+        f"Source: {meta.get('title', 'Unknown')}\nContent: {doc}"
+        for doc, meta in zip(docs, metadatas)
+    )
+    return serialized, results
+
+from langchain.agents import create_agent
+
+tools = [retrieve_context]
+# If desired, specify custom instructions
+prompt = (
+    "You have access to a tool that retrieves context and tells which document the query asked should refer to. Then the particular document get's added to memory and the user can chat with it."
+    "Use the tool to help answer user queries."
+)
+
+agent = create_agent(model, tools, system_prompt=prompt)
+
+query = (
+    "What regulates the risk of recurrent VTE?\n\n"
+    "Once you get the answer, explain briefly."
+)
+
+for event in agent.stream(
+    {"messages": [{"role": "user", "content": query}]},
+    stream_mode="values",
+):
+    event["messages"][-1].pretty_print()
+
+
