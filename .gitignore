@@ -42,6 +42,7 @@ chroma_db/
 # Environment variables
 .env
 .env.local
+openai_key.txt
 
 # OS
 .DS_Store
