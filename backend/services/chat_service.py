@@ -69,10 +69,10 @@ class ChatService:
             Filter documents by category and optionally search within them.
             
             Use this tool when the user wants to find documents in a specific category
-            like "Education/Capita Selecta", "Research Meeting", "Seminar", etc.
+            like "Education", "Capita Selecta", "Research Meeting", "World Headlines", etc.
             
             Args:
-                category: The category to filter by (e.g., "Education/Capita Selecta", "Research Meeting")
+                category: The category to filter by (e.g., "Education", Capita Selecta", "Research Meeting")
                 query: Optional search query to further filter results within the category
                 
             Returns:
@@ -207,7 +207,7 @@ class ChatService:
                 "You are a helpful assistant that answers questions based on documents "
                 "that have been analyzed and indexed. You have access to several tools:\n"
                 "- retrieve_context: General semantic search across all documents\n"
-                "- filter_by_category: Filter documents by category (e.g., 'Education/Capita Selecta', 'Research Meeting')\n"
+                "- filter_by_category: Filter documents by category (e.g., 'Education', Capita Selecta', 'Research Meeting')\n"
                 "- filter_by_topic: Filter documents by topic (e.g., 'survival analysis', 'causal inference')\n"
                 "- filter_by_tag: Filter documents by tag\n\n"
                 "Use the appropriate tool based on the user's query. If they mention a specific category, "

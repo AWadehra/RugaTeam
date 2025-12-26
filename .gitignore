@@ -13,5 +13,9 @@
 venv/
 .venv/
 
+P2/
+CLAUDE.md
+understanding/
+
 __pycache__/
 chroma_db/

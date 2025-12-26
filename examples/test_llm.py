@@ -54,11 +54,10 @@ KNOWN_TOPICS = load_vocab(str(TOPICS_FILE))
 KNOWN_TAGS = load_vocab(str(TAGS_FILE))
 
 CATEGORIES = [
-    "Education/Capita Selecta",
-    "Education/Course",
+    "Education",
+    "Capita Selecta",
     "Research Meeting",
-    "Seminar",
-    "Workshop",
+    "World Headlines",
     "Miscellaneous",
 ]
 

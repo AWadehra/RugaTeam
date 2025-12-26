@@ -266,7 +266,7 @@ Current folder structure:
 Based on the file metadata (categories, topics, tags, dates, authors), suggest a new, improved folder structure.
 
 The desired organization should:
-- Group files by category (Education/Capita Selecta, Research Meeting, Seminar, Workshop, etc.)
+- Group files by category (Education, Capita Selecta, Research Meeting, World Headlines, Miscellaneous)
 - Organize by year when relevant
 - Use clear, descriptive folder names
 - Avoid deep nesting (max 3-4 levels)

@@ -128,7 +128,7 @@ class FolderOrganizationService:
         system_prompt = """You are an expert at organizing academic documents and presentations for a medical department.
 
 Your task is to analyze file metadata and suggest an organized folder structure that:
-- Groups files by category (Education/Capita Selecta, Education/Course, Research Meeting, Seminar, Workshop, Miscellaneous)
+- Groups files by category (Education, Capita Selecta, Research Meeting, World Headlines, Miscellaneous)
 - Organizes by academic year when dates are available
 - Uses clear, descriptive folder names
 - You can decide to give a different name to the file based on the summary, suggested_filename, title, topics, tags, etc.
