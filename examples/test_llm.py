@@ -170,7 +170,8 @@ def sanitize_filename(text: str, max_length: int = 100) -> str:
 
 def generate_suggested_filename(
     title: str,
-    categories: List[str],
+    topics: List[str],
+    authors: List[Author],
     creation_date: Optional[date],
     file_type: str,
 ) -> str:
@@ -181,17 +182,22 @@ def generate_suggested_filename(
     if creation_date:
         parts.append(creation_date.strftime("%Y-%m-%d"))
     
-    # Add category prefix (first category, sanitized)
-    if categories:
-        category_part = sanitize_filename(categories[0], max_length=30)
-        parts.append(category_part)
+    # Add topics prefix (first topic, sanitized)
+    if topics:
+        topic_part = sanitize_filename(topics[0], max_length=30)
+        parts.append(topic_part)
+    
+    # Add speaker (first author, sanitised)
+    if authors:
+        author_part = sanitize_filename(authors[0].name, max_length=30)
+        parts.append(author_part)
     
     # Add sanitized title
     title_part = sanitize_filename(title, max_length=50)
     parts.append(title_part)
     
     # Join parts and add extension
-    filename = "-".join(parts)
+    filename = "__".join(parts)
     if not filename:
         filename = "untitled"
     
@@ -220,7 +226,8 @@ def build_final_record(
         title=title,
         suggested_filename=generate_suggested_filename(
             title=title,
-            categories=llm_result.categories,
+            topics=llm_result.topics,
+            authors=llm_result.authors,
             creation_date=llm_result.creation_date,
             file_type=file_type,
         ),
