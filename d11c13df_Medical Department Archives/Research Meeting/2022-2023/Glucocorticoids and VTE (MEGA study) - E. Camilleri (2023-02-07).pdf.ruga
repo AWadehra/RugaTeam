@@ -1,0 +1,178 @@
+{
+  "file_id": "fb0983e9-6cf9-4740-aa9c-333c4786538d",
+  "original_path": "D:\\Projects\\RugaTeam\\LUMC\\2023.02.07_EleonoraCamilleri_ResearchMeeting.pdf",
+  "file_type": "pdf",
+  "content_hash": "d468d387f812942ff612af3cf8a8e8036ab924d70f48e52c51e35f3c2e102470",
+  "title": "Glucocorticoids treatment and coagulation parameters in patients with a first venous thromboembolism: Data from the MEGA study",
+  "suggested_filename": "2023-02-07__epidemiology__Eleonora-Camilleri__Glucocorticoids-treatment-and-coagulation-paramete.pdf",
+  "category": "Research Meeting",
+  "creation_date": "2023-02-07",
+  "last_modified_date": "2025-12-13T04:27:40Z",
+  "analysis_date": "2025-12-27T01:58:02.004395Z",
+  "authors": [
+    {
+      "name": "Eleonora Camilleri",
+      "orcid": null
+    },
+    {
+      "name": "Suzanne Cannegieter",
+      "orcid": null
+    },
+    {
+      "name": "Nienke van Rein",
+      "orcid": null
+    },
+    {
+      "name": "Fereshteh Shokri",
+      "orcid": null
+    },
+    {
+      "name": "Frits Rosendaal",
+      "orcid": null
+    },
+    {
+      "name": "Olaf Dekkers",
+      "orcid": null
+    },
+    {
+      "name": "Bart van Vlijmen",
+      "orcid": null
+    },
+    {
+      "name": "Erik Klok",
+      "orcid": null
+    },
+    {
+      "name": "Menno Huisman",
+      "orcid": null
+    },
+    {
+      "name": "Alberto Pereira Arias",
+      "orcid": null
+    },
+    {
+      "name": "Nienke Biermasz",
+      "orcid": null
+    },
+    {
+      "name": "Onno Meijer",
+      "orcid": null
+    },
+    {
+      "name": "Richard Feelders",
+      "orcid": null
+    },
+    {
+      "name": "Merve Kaya",
+      "orcid": null
+    }
+  ],
+  "topics": [
+    "epidemiology",
+    "survival analysis",
+    "time-to-event data",
+    "venous thromboembolism",
+    "coagulation parameters",
+    "glucocorticoids treatment",
+    "recurrent VTE"
+  ],
+  "tags": [
+    "methods",
+    "statistics",
+    "clinical research",
+    "pharmacology",
+    "hematology"
+  ],
+  "summary": "This presentation investigates the impact of glucocorticoid (GC) treatment on coagulation parameters in patients with a first venous thromboembolism (VTE), utilizing data from the MEGA study. It explores differences in coagulation associated with GC treatment and the role of coagulation in mediating the risk of recurrent VTE in GC-treated patients. The findings indicate that mean levels of most procoagulant parameters (except Factor X) are higher in GC-treated patients, consistent with observations in endogenous Cushing's syndrome, while global tests like ETP and CLT show no difference. The increased risk of recurrent VTE is found to be partially mediated by these increases in procoagulant factors.",
+  "glossary_terms": [
+    {
+      "term": "Glucocorticoids",
+      "definition": "A type of steroid hormone used in treatment and associated with adverse effects, including VTE risk.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Venous Thromboembolism (VTE)",
+      "definition": "A medical condition involving blood clots forming in the veins, including deep vein thrombosis and pulmonary embolism.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Coagulation parameters",
+      "definition": "Measurements of factors involved in blood clotting.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "MEGA study",
+      "definition": "A case-control study conducted from 1999-2004 investigating the causes of venous thromboembolism.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Cushing's syndrome",
+      "definition": "A medical condition characterized by prolonged exposure of the body's tissues to high levels of cortisol, often mentioned in relation to endogenous glucocorticoids.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "FVIII",
+      "definition": "Factor VIII, a coagulation factor.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "FIX",
+      "definition": "Factor IX, a coagulation factor.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "vWF",
+      "definition": "von Willebrand Factor, a coagulation factor.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "PAI-1",
+      "definition": "Plasminogen Activator Inhibitor-1, an antifibrinolytic factor.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "ATIII",
+      "definition": "Antithrombin III, an anticoagulant factor.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Protein C",
+      "definition": "An anticoagulant protein.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Protein S",
+      "definition": "An anticoagulant protein.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "FX",
+      "definition": "Factor X, a coagulation factor.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "ETP",
+      "definition": "Endogenous Thrombin Potential, a global test of coagulation.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "CLT",
+      "definition": "Clot Lysis Time, a global test of fibrinolysis.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Hazard Ratio",
+      "definition": "A measure used in survival analysis to compare the risk of an event in two groups.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Mediation analysis",
+      "definition": "A statistical method used to identify and explain the mechanism or process that underlies an observed relationship between an independent variable and a dependent variable.",
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-27T01:58:02.004395Z"
+}

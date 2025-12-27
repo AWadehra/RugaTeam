@@ -16,12 +16,19 @@ import re
 
 from pydantic import BaseModel, Field
 
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
+
+# Add backend to path for imports
+import sys
+BACKEND_DIR = Path(__file__).parent.parent / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+from utils.llm_config import get_chat_llm
 
 
 # ============================================================
@@ -90,7 +97,7 @@ class LLMExtractionSchema(BaseModel):
     suggested_title: Optional[str]
     summary: Optional[str]
 
-    categories: List[str]
+    category: str = Field(description="Single best-fit category for this document")
     topics: List[str]
     tags: List[str]
 
@@ -123,7 +130,7 @@ class FinalFileRecord(BaseModel):
     suggested_filename: str  # Generated from title and metadata
 
     # Organization
-    categories: List[str]
+    category: str
 
     # Dates
     creation_date: Optional[date]
@@ -232,7 +239,7 @@ def build_final_record(
             file_type=file_type,
         ),
 
-        categories=llm_result.categories,
+        category=llm_result.category,
 
         creation_date=llm_result.creation_date,
         last_modified_date=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
@@ -264,10 +271,7 @@ def build_final_record(
 # 6. LLM Setup
 # ============================================================
 
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0,
-)
+llm = get_chat_llm(temperature=0)
 
 structured_llm = llm.with_structured_output(LLMExtractionSchema)
 
@@ -285,7 +289,7 @@ STRICT RULES:
 - If uncertain, return null or empty lists and record this in quality_flags.low_confidence_fields.
 - ORCID identifiers must only be included if explicitly written in the text.
 
-CATEGORIES (choose only from this list):
+CATEGORIES (choose exactly ONE from this list - pick the best fit):
 {CATEGORIES}
 
 KNOWN TOPICS (reuse if applicable):

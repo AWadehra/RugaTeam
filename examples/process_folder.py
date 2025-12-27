@@ -20,7 +20,22 @@ from test_llm import (
     FinalFileRecord,
     LLMExtractionSchema,
 )
-from docling.document_converter import DocumentConverter
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions, AcceleratorOptions, AcceleratorDevice
+
+# Configure accelerator to auto-detect GPU (CUDA/MPS) or fallback to CPU
+_accelerator_options = AcceleratorOptions(device=AcceleratorDevice.AUTO)
+_pdf_pipeline_options = PdfPipelineOptions(accelerator_options=_accelerator_options)
+_pdf_format_option = PdfFormatOption(pipeline_options=_pdf_pipeline_options)
+
+# Create a single reusable converter with GPU auto-detection
+_docling_converter = DocumentConverter(
+    format_options={
+        InputFormat.PDF: _pdf_format_option,
+    }
+)
+
 
 # Define helper functions for file processing
 def process_txt_file(txt_path: Path) -> str:
@@ -29,9 +44,8 @@ def process_txt_file(txt_path: Path) -> str:
 
 
 def process_with_docling(file_path: Path) -> str:
-    """Process a file with Docling (PDF, DOCX, etc.)."""
-    converter = DocumentConverter()
-    result = converter.convert(str(file_path))
+    """Process a file with Docling (PDF, DOCX, etc.). Auto-detects GPU."""
+    result = _docling_converter.convert(str(file_path))
     return result.document.export_to_markdown()
 from ruga_file_handler import (
     has_ruga_metadata,
@@ -39,43 +53,74 @@ from ruga_file_handler import (
     load_ruga_metadata,
     get_ruga_path,
 )
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+
+# Add backend to path for imports
+import sys
+BACKEND_DIR = Path(__file__).parent.parent / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+from utils.llm_config import get_chat_llm
 
 # Docling converter will be initialized when needed
 
 # Initialize LLM for folder structure suggestion (non-structured)
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0,
-)
+llm = get_chat_llm(temperature=0)
+
+
+# Supported file extensions
+DOCLING_SUPPORTED = {'.pdf', '.docx', '.pptx', '.xlsx'}
+TEXT_EXTENSIONS = {'.txt', '.md', '.html', '.xml', '.json', '.yaml', '.yml'}
+
+# Skip these - no useful content for metadata extraction
+SKIP_EXTENSIONS = {
+    # Media
+    '.mp4', '.mp3', '.wav', '.avi', '.mov', '.mkv', '.webm', '.ogg', '.flac', '.m4a',
+    # Data files
+    '.csv', '.tsv', '.parquet', '.feather', '.pickle', '.pkl',
+    # Archives
+    '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2',
+    # Executables/binaries
+    '.exe', '.dll', '.so', '.dylib', '.bin',
+    # Images (no text content)
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.ico', '.svg', '.webp',
+}
 
 
 def get_file_content(file_path: Path) -> str:
     """
     Extract content from a file using Docling if supported, otherwise read directly.
-    
+
     Args:
         file_path: Path to the file
-        
+
     Returns:
         Extracted text content
     """
     file_ext = file_path.suffix.lower()
-    
-    if file_ext == '.txt':
-        # Read .txt files directly
+
+    # Skip files with no useful text content
+    if file_ext in SKIP_EXTENSIONS:
+        return None  # Signal to skip this file entirely
+
+    if file_ext in TEXT_EXTENSIONS or file_ext == '.txt':
+        # Read text files directly
         return process_txt_file(file_path)
-    elif file_ext == '.pdf':
-        # Use Docling for PDF
+    elif file_ext in DOCLING_SUPPORTED:
+        # Use Docling for supported formats
         try:
             return process_with_docling(file_path)
         except Exception as e:
-            print(f"⚠️  Error processing PDF with Docling: {e}")
-            # Fallback: try to read as text (won't work for PDF, but handles error gracefully)
-            return file_path.read_text(encoding="utf-8", errors="ignore")
+            print(f"⚠️  Error processing {file_ext} with Docling: {e}")
+            # Fallback: try to read as text
+            try:
+                return file_path.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                return f"[Could not extract content from {file_path.name}]"
     else:
-        # For other formats, try Docling first, then fallback to text reading
+        # Unknown format - try Docling first, then fallback to text reading
+        print(f"  ⚠️  Unknown format {file_ext}, attempting to process...")
         try:
             return process_with_docling(file_path)
         except Exception:
@@ -89,29 +134,34 @@ def get_file_content(file_path: Path) -> str:
 def process_file_for_metadata(file_path: Path, folder_root: Path) -> Optional[FinalFileRecord]:
     """
     Process a single file to generate .ruga metadata.
-    
+
     Args:
         file_path: Path to the file to process
         folder_root: Root folder path (for relative paths)
-        
+
     Returns:
         FinalFileRecord if successful, None otherwise
     """
+    # Skip unsupported file types early
+    if file_path.suffix.lower() in SKIP_EXTENSIONS:
+        print(f"  ⏭️  Skipping: {file_path.relative_to(folder_root)}")
+        return None
+
     print(f"\n📄 Processing: {file_path.relative_to(folder_root)}")
-    
+
     try:
         # Extract content
         print("  📖 Extracting content...")
         content = get_file_content(file_path)
-        
+
         if not content or len(content.strip()) < 10:
             print(f"  ⚠️  File appears empty or content extraction failed")
             return None
-        
+
         # Run LLM extraction
         print("  🤖 Running LLM extraction...")
         llm_result = chain.invoke({"text": content})
-        
+
         # Build final record
         print("  📊 Building final record...")
         final_record = build_final_record(
@@ -119,14 +169,14 @@ def process_file_for_metadata(file_path: Path, folder_root: Path) -> Optional[Fi
             file_path=file_path,
             llm_model_name="gpt-4o-mini",
         )
-        
+
         # Save to .ruga file
         print("  💾 Saving .ruga metadata...")
         ruga_path = save_ruga_metadata(file_path, final_record)
         print(f"  ✅ Saved: {ruga_path.name}")
-        
+
         return final_record
-        
+
     except Exception as e:
         print(f"  ❌ Error processing file: {e}")
         return None
@@ -156,7 +206,7 @@ def collect_file_summaries(folder_path: Path) -> List[Dict[str, Any]]:
                 file_summaries.append({
                     'path': str(rel_path),
                     'title': metadata.title,
-                    'categories': metadata.categories,
+                    'category': metadata.category,
                     'topics': metadata.topics,
                     'tags': metadata.tags,
                     'summary': metadata.summary,
@@ -168,7 +218,7 @@ def collect_file_summaries(folder_path: Path) -> List[Dict[str, Any]]:
                 file_summaries.append({
                     'path': str(rel_path),
                     'title': file_path.stem,
-                    'categories': [],
+                    'category': 'Miscellaneous',
                     'topics': [],
                     'tags': [],
                     'summary': f"File: {file_path.name}",
@@ -243,8 +293,7 @@ def suggest_folder_structure(folder_path: Path, file_summaries: List[Dict[str, A
     for i, file_info in enumerate(file_summaries, 1):
         file_info_text += f"\n{i}. {file_info['path']}\n"
         file_info_text += f"   Title: {file_info['title']}\n"
-        if file_info['categories']:
-            file_info_text += f"   Categories: {', '.join(file_info['categories'])}\n"
+        file_info_text += f"   Category: {file_info['category']}\n"
         if file_info['topics']:
             file_info_text += f"   Topics: {', '.join(file_info['topics'][:5])}\n"  # First 5 topics
         if file_info['tags']:
@@ -263,7 +312,7 @@ Current folder structure:
 
 {file_info_text}
 
-Based on the file metadata (categories, topics, tags, dates, authors), suggest a new, improved folder structure.
+Based on the file metadata (category, topics, tags, dates, authors), suggest a new, improved folder structure.
 
 The desired organization should:
 - Group files by category (Education, Capita Selecta, Research Meeting, World Headlines, Miscellaneous)

@@ -53,7 +53,7 @@ except ImportError:
         content_hash: str
         title: str
         suggested_filename: str
-        categories: List[str]
+        category: str
         creation_date: Optional[date] = None
         last_modified_date: datetime
         analysis_date: datetime
@@ -226,7 +226,7 @@ def get_metadata_summary(metadata: FinalFileRecord) -> dict:
     return {
         "file_id": str(metadata.file_id),
         "title": metadata.title,
-        "categories": metadata.categories,
+        "category": metadata.category,
         "topics": metadata.topics[:5] if len(metadata.topics) > 5 else metadata.topics,  # First 5 topics
         "tags": metadata.tags,
         "authors": [a.name for a in metadata.authors],

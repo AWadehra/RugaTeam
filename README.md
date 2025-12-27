@@ -42,7 +42,7 @@ RUGA provides three main capabilities:
 ### Prerequisites
 
 - Python 3.11 or higher
-- OpenAI API key (for file analysis and chat)
+- LLM API key (Gemini, OpenAI, or GreenPT)
 - [uv](https://github.com/astral-sh/uv) (recommended) or pip
 
 ### Setup
@@ -66,9 +66,15 @@ RUGA provides three main capabilities:
    ```bash
    # Copy the example file
    cp .env.example .env
-   
-   # Edit .env and add your OpenAI API key
-   OPENAI_API_KEY="your-openai-api-key-here"
+
+   # Edit .env and configure your LLM provider
+   # Default is Gemini (free tier available)
+   LLM_PROVIDER=gemini
+   GOOGLE_API_KEY="your-google-api-key-here"
+
+   # Or use OpenAI
+   # LLM_PROVIDER=openai
+   # OPENAI_API_KEY="your-openai-api-key-here"
    ```
 
 ## Quick Start

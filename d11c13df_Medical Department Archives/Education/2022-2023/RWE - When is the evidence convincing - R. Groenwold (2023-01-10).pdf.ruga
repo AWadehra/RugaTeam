@@ -1,0 +1,90 @@
+{
+  "file_id": "b8c19c2d-1610-4d93-ac48-484234c70064",
+  "original_path": "D:\\Projects\\RugaTeam\\LUMC\\2023.01.10 RWE_Groenwold_10Jan2023.pdf",
+  "file_type": "pdf",
+  "content_hash": "d305d676b7c59ca571cb7255214f293acec2eff36c983578e1175e8a85e6694b",
+  "title": "Real-world evidence using routinely collected health data: when is the evidence convincing?",
+  "suggested_filename": "2023-01-10__epidemiology__Rolf-H.H.-Groenwold__Real-world-evidence-using-routinely-collected-heal.pdf",
+  "category": "Education",
+  "creation_date": "2023-01-10",
+  "last_modified_date": "2025-12-13T04:28:02Z",
+  "analysis_date": "2025-12-27T01:52:36.504795Z",
+  "authors": [
+    {
+      "name": "Rolf H.H. Groenwold",
+      "orcid": null
+    }
+  ],
+  "topics": [
+    "epidemiology",
+    "clinical research",
+    "statistics",
+    "real-world evidence",
+    "real-world data",
+    "bias analysis",
+    "target trial emulation",
+    "drug development",
+    "observational studies"
+  ],
+  "tags": [
+    "methods",
+    "teaching",
+    "clinical research",
+    "regulatory science",
+    "data science",
+    "healthcare data",
+    "health outcomes research"
+  ],
+  "summary": "This presentation explores real-world evidence (RWE) derived from routinely collected health data (RWD), defining both terms according to various regulatory bodies. It categorizes diverse sources of RWD, including clinical, mobile health, medication, environmental, claims, patient-reported, molecular profiling, social media, family history, and literature. The document contrasts the uses of RWD across different study designs, from traditional randomized controlled trials (RCTs) to observational studies, and discusses the 'efficacy-effectiveness gap.' Key challenges in real-world observational studies are identified as missing data, measurement error, and confounding. Statistical solutions such as target trial emulation and quantitative bias analysis (QBA), including the E-Value, are presented to address these biases. The presentation concludes that RWE serves as complementary evidence, particularly valuable for regulatory decision-making in post-market safety, post-market effectiveness, and rare orphan diseases, emphasizing the need for robust methodologies.",
+  "glossary_terms": [
+    {
+      "term": "Real-world data (RWD)",
+      "definition": "Data relating to patient health status and/or the delivery of health care routinely collected from a variety of sources other than traditional clinical trials.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Real-world evidence (RWE)",
+      "definition": "Evidence derived from the analysis and/or synthesis of real-world data, providing clinical evidence about the usage and potential benefits or risks of a medical product.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Efficacy",
+      "definition": "Does it work? (potentially)",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Effectiveness",
+      "definition": "Does it help? (in daily practice)",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Target trial emulation",
+      "definition": "Applying principles of randomised trials to observational studies to estimate the causal effect of an intervention.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Quantitative bias analysis (QBA)",
+      "definition": "Investigation of how sensitive the results are to violations of certain assumptions made in the design/analysis.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "E-Value",
+      "definition": "The value of the joint minimum strength (RR) of confounder-exposure AND confounder-outcome relation needed to fully explain away an observed effect.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "RCTs",
+      "definition": "Randomized controlled trials.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "EHR",
+      "definition": "Electronic health records.",
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-27T01:52:36.504795Z"
+}

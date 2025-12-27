@@ -92,7 +92,7 @@ class FolderOrganizationService:
             file_summaries.append({
                 'path': item['relative_path'],
                 'title': meta.get('title', ''),
-                'categories': meta.get('categories', []),
+                'category': meta.get('category', 'Miscellaneous'),
                 'topics': meta.get('topics', []),
                 'tags': meta.get('tags', []),
                 'summary': meta.get('summary', ''),
@@ -108,8 +108,7 @@ class FolderOrganizationService:
         for i, file_info in enumerate(file_summaries, 1):
             file_info_text += f"{i}. {file_info['path']}\n"
             file_info_text += f"   Title: {file_info['title']}\n"
-            if file_info['categories']:
-                file_info_text += f"   Categories: {', '.join(file_info['categories'])}\n"
+            file_info_text += f"   Category: {file_info['category']}\n"
             if file_info['topics']:
                 file_info_text += f"   Topics: {', '.join(file_info['topics'][:5])}\n"
             if file_info['tags']:
@@ -128,7 +127,7 @@ class FolderOrganizationService:
         system_prompt = """You are an expert at organizing academic documents and presentations for a medical department.
 
 Your task is to analyze file metadata and suggest an organized folder structure that:
-- Groups files by category (Education, Capita Selecta, Research Meeting, World Headlines, Miscellaneous)
+- Groups files by their category (Education, Capita Selecta, Research Meeting, World Headlines, Miscellaneous)
 - Organizes by academic year when dates are available
 - Uses clear, descriptive folder names
 - You can decide to give a different name to the file based on the summary, suggested_filename, title, topics, tags, etc.
@@ -137,7 +136,7 @@ Your task is to analyze file metadata and suggest an organized folder structure 
 - If duplicates are found, move the duplicate to the original file's folder with a suffix indicating the duplicate number.
 
 For each file, suggest where it should be moved based on:
-- Its categories (primary organization)
+- Its category (primary organization - each file has exactly one category)
 - Creation or modification dates (for year-based organization)
 - Topics and tags (for subcategorization)
 

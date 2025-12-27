@@ -1,0 +1,110 @@
+{
+  "file_id": "2be0db86-a5dd-4245-8a83-7b94f2c4c349",
+  "original_path": "D:\\Projects\\RugaTeam\\LUMC\\2023.01.24 Epi_Research_Meeting_24jan2023.pptx",
+  "file_type": "pptx",
+  "content_hash": "7e45d14ce117331d34b9682a11ff8878862252505a7927ed6b05f5ce34e583da",
+  "title": "Surveillance for Pancreatic Ductal Adenocarcinoma in CDKN2A/p16 Mutation Carriers",
+  "suggested_filename": "2022-06-03__survival-analysis__Derk-Klatte__Surveillance-for-Pancreatic-Ductal-Adenocarcinoma.pptx",
+  "category": "Research Meeting",
+  "creation_date": "2022-06-03",
+  "last_modified_date": "2025-12-13T04:27:48Z",
+  "analysis_date": "2025-12-27T01:55:56.377934Z",
+  "authors": [
+    {
+      "name": "Derk Klatte",
+      "orcid": null
+    }
+  ],
+  "topics": [
+    "survival analysis",
+    "epidemiology",
+    "time-to-event data",
+    "kaplan-meier curves",
+    "pancreatic cancer",
+    "cancer screening",
+    "genetic mutations",
+    "CDKN2A mutation",
+    "hereditary melanoma"
+  ],
+  "tags": [
+    "methods",
+    "statistics",
+    "oncology",
+    "clinical research",
+    "surveillance",
+    "early detection",
+    "genetic predisposition"
+  ],
+  "summary": "This presentation discusses the rationale for and outcomes of pancreatic cancer surveillance, focusing on CDKN2A/p16 mutation carriers. Given the high mortality and low early-stage detection rates of pancreatic ductal adenocarcinoma (PDAC) in the general population, surveillance targets high-risk individuals. The study presents 20-year data from a LUMC surveillance program for germline CDKN2A/p16 mutation carriers, demonstrating a high lifetime risk of PDAC (21% at age 70). Surveillance led to earlier detection (33% stage I), increased resectability (83%), and improved 5-year survival (32%) compared to historical general population rates. A comparison with a propensity score-matched cohort from the Netherlands Cancer Registry confirmed that surveillance patients had lower stage disease, higher resectability, and improved lead-time adjusted survival. Future work includes evaluating surgical outcomes, risk stratification, and biomarkers.",
+  "glossary_terms": [
+    {
+      "term": "PDAC",
+      "definition": "Pancreatic Ductal Adenocarcinoma",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "CDKN2A/p16 mutation",
+      "definition": "Most common gene mutation in hereditary melanoma and associated with increased pancreatic cancer risk.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "EUS",
+      "definition": "A method used for surveillance and sampling of pancreatic lesions.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "MRI/MRCP",
+      "definition": "A method used for surveillance of pancreatic lesions.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Lead time",
+      "definition": "Estimation of additional follow-up time purely as a result of lead time in screen-detected cancers.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Sojourn time",
+      "definition": "Asymptomatic, but-screen detectable time.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "R0 resection",
+      "definition": "Surgical removal of a tumor with clear margins.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "SMD",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "IQR",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "PV",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "FDR",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "HBOC",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Lynch syndrome",
+      "definition": null,
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-27T01:55:56.377934Z"
+}

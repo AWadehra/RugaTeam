@@ -21,6 +21,15 @@ if str(BACKEND_DIR) not in sys.path:
 from ruga_file_handler import has_ruga_metadata, load_ruga_metadata
 from models.schemas import FileInfo
 
+# Skip these file types - no useful content for metadata extraction
+SKIP_EXTENSIONS = {
+    '.mp4', '.mp3', '.wav', '.avi', '.mov', '.mkv', '.webm', '.ogg', '.flac', '.m4a',
+    '.csv', '.tsv', '.parquet', '.feather', '.pickle', '.pkl',
+    '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2',
+    '.exe', '.dll', '.so', '.dylib', '.bin',
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.ico', '.svg', '.webp',
+}
+
 
 class FileService:
     """Service for file listing and operations."""
@@ -67,18 +76,22 @@ class FileService:
     
     async def get_files_without_ruga(self, root_path: Path) -> List[Path]:
         """
-        Get all files in root_path that don't have .ruga files.
-        
-        Returns list of Path objects.
+        Get all processable files in root_path that don't have .ruga files.
+
+        Returns list of Path objects (excludes unsupported file types).
         """
         files_without_ruga = []
-        
+
         try:
             for item in root_path.rglob('*'):
                 # Skip if not a file or is a .ruga file itself
                 if not item.is_file() or item.suffix == '.ruga':
                     continue
-                
+
+                # Skip unsupported file types
+                if item.suffix.lower() in SKIP_EXTENSIONS:
+                    continue
+
                 # Check if .ruga metadata exists
                 if not has_ruga_metadata(item):
                     files_without_ruga.append(item)
@@ -86,5 +99,5 @@ class FileService:
             # Log error but don't fail completely
             import logging
             logging.error(f"Error scanning files in {root_path}: {e}")
-        
+
         return files_without_ruga

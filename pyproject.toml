@@ -21,10 +21,17 @@ dependencies = [
     "httpx>=0.25.0",
     "rich>=13.0.0",
     "viztracer>=1.1.1",
+    "langchain-google-genai>=2.0.0",
 ]
 
 [project.scripts]
 ruga = "ruga_cli.cli:cli"
 
+[tool.setuptools.packages.find]
+include = ["backend*", "ruga_cli*"]
+
 [tool.pyright]
 extraPaths = ["./examples"]
+
+[tool.uv]
+package = true

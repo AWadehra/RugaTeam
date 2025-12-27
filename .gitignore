@@ -13,9 +13,11 @@
 venv/
 .venv/
 
+OAIKey/
 P2/
 CLAUDE.md
 understanding/
+ruga_server.egg-info/
 
 __pycache__/
 chroma_db/
