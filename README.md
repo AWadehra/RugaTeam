@@ -34,8 +34,10 @@ RUGA provides three main capabilities:
 - ✅ **Vector Store Search**: Embed documents for semantic search and retrieval
 - ✅ **RAG Chat Interface**: Ask questions about your documents
 - ✅ **Background Processing**: Asynchronous file analysis with job tracking
+- ✅ **Web Interface**: Modern SvelteKit frontend with real-time progress tracking
 - ✅ **Beautiful CLI**: Command-line interface with ASCII art and rich formatting
 - ✅ **RESTful API**: Full API for integration with other tools
+- ✅ **Multiple LLM Providers**: Support for Gemini (free tier), OpenAI, and GreenPT
 
 ## Installation
 
@@ -79,7 +81,7 @@ RUGA provides three main capabilities:
 
 ## Quick Start
 
-### 1. Start the Server
+### 1. Start the Backend Server
 
 ```bash
 # From the project root
@@ -90,9 +92,21 @@ python main.py
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-The server will be available at `http://localhost:8000`
+The backend API will be available at `http://localhost:8000`
 
-### 2. Use the CLI
+### 2. Start the Web Frontend (Optional)
+
+```bash
+# In a new terminal
+cd frontend
+npm install
+cp .example.env .env
+npm run dev
+```
+
+The web interface will be available at `http://localhost:5173`
+
+### 3. Use the CLI (Alternative to Web UI)
 
 ```bash
 # Check server connection
@@ -116,9 +130,60 @@ ruga organize all ./examples/unstructured_folder
 ruga chat "What documents discuss survival analysis?"
 ```
 
+## Web Frontend
+
+RUGA includes a modern web interface built with SvelteKit, providing a user-friendly alternative to the CLI.
+
+### Features
+
+- **List Files**: View all files in a directory with their `.ruga` analysis status
+- **Analyze All**: Analyze files with real-time progress tracking (shows per-file status)
+- **Organize**: Two-step organization flow - preview suggested structure, then apply
+- **Chat**: RAG-powered chat with your documents using streaming responses
+- **Smart Button States**: Buttons automatically disable when actions aren't applicable (e.g., "Already Organized" for organized folders)
+
+### Running the Frontend
+
+```bash
+cd frontend
+npm install
+cp .example.env .env
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser.
+
+### Frontend Configuration
+
+The frontend connects to the backend via the `.env` file:
+
+```env
+VITE_API_BASE_URL=http://localhost:5173/api
+API_RUGA_SERVER=http://localhost:8000
+```
+
+### Using the Web Interface
+
+1. **Enter a folder path** in the input field (e.g., `D:\Documents\Research`)
+2. **Click "List Files"** to see all files and their analysis status
+3. **Click "Analyze All (N)"** to analyze files without `.ruga` metadata
+   - Watch real-time progress with per-file status updates
+4. **Click "Organize (N)"** to organize analyzed files
+   - Preview the suggested folder structure
+   - Review file moves with reasons
+   - Click "Apply" to create the organized folder
+5. **Use the Chat** panel to ask questions about your documents
+
+### Technology Stack (Frontend)
+
+- **SvelteKit 2**: Modern web framework with SSR
+- **Svelte 5**: Latest Svelte with Runes reactivity
+- **TailwindCSS 4**: Utility-first styling
+- **TanStack Table**: Headless table for file listing
+
 ## RUGA CLI
 
-The RUGA CLI is the primary interface for interacting with the RUGA server. It provides a beautiful command-line experience with ASCII art banners and rich formatting.
+The RUGA CLI is an alternative interface for interacting with the RUGA server. It provides a beautiful command-line experience with ASCII art banners and rich formatting.
 
 ### Installation
 
@@ -305,6 +370,19 @@ RugaTeam/
 │       ├── folder_organization_service.py
 │       ├── job_service.py
 │       └── vector_store_service.py
+├── frontend/             # SvelteKit web interface
+│   ├── src/
+│   │   ├── routes/       # Pages and API routes
+│   │   │   ├── +page.svelte        # Main page
+│   │   │   └── api/                # Backend proxy routes
+│   │   └── lib/
+│   │       ├── components/         # UI components
+│   │       │   ├── analysis/       # Analysis progress
+│   │       │   ├── chat/           # Chat interface
+│   │       │   ├── documents/      # File table
+│   │       │   └── organize/       # Organization preview/result
+│   │       └── types/              # TypeScript types
+│   └── .env              # Frontend configuration
 ├── ruga_cli/             # Command-line interface
 │   ├── cli.py            # CLI commands
 │   ├── api_client.py     # API client wrapper
@@ -384,21 +462,36 @@ We've created a workflow that:
 ### Running in Development Mode
 
 ```bash
-# Start server with auto-reload
+# Terminal 1: Start backend with auto-reload
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+
+# Terminal 2: Start frontend with hot reload
+cd frontend && npm run dev
 ```
 
 ### Technology Stack
 
+**Backend:**
 - **FastAPI**: Web framework for the API server
-- **LangChain**: LLM integration and RAG
+- **LangChain/LangGraph**: LLM integration and RAG agents
 - **ChromaDB**: Vector store for document embeddings
 - **Docling**: Document parsing (PDF, DOCX)
-- **OpenAI**: LLM and embeddings (default)
-- **GreenPT**: Alternative LLM provider (optional, via environment variable)
+- **Pydantic**: Data validation
+
+**Frontend:**
+- **SvelteKit 2**: Web framework with SSR
+- **Svelte 5**: UI framework with Runes reactivity
+- **TailwindCSS 4**: Utility-first CSS
+- **TanStack Table**: Headless table library
+
+**LLM Providers:**
+- **Gemini**: Default provider (free tier available)
+- **OpenAI**: GPT models and embeddings
+- **GreenPT**: Alternative provider
+
+**CLI:**
 - **Click**: CLI framework
 - **Rich**: Terminal formatting and ASCII art
-- **Pydantic**: Data validation
 
 ### Environment Variables
 

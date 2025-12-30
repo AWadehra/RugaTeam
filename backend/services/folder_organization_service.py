@@ -185,8 +185,8 @@ Generate a folder structure that organizes these {len(file_summaries)} files log
         
         structure = self.structures[structure_id]
         
-        # Create new root folder with UUID prefix
-        new_root_name = f"{structure_id[:8]}_{structure.root_folder_name}"
+        # Create new root folder based on original folder name
+        new_root_name = f"{original_root.name}_organized"
         new_root = original_root.parent / new_root_name
         
         errors = []
