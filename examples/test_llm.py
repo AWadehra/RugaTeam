@@ -16,12 +16,19 @@ import re
 
 from pydantic import BaseModel, Field
 
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
+
+# Add backend to path for imports
+import sys
+BACKEND_DIR = Path(__file__).parent.parent / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+from utils.llm_config import get_chat_llm
 
 
 # ============================================================
@@ -54,11 +61,10 @@ KNOWN_TOPICS = load_vocab(str(TOPICS_FILE))
 KNOWN_TAGS = load_vocab(str(TAGS_FILE))
 
 CATEGORIES = [
-    "Education/Capita Selecta",
-    "Education/Course",
+    "Education",
+    "Capita Selecta",
     "Research Meeting",
-    "Seminar",
-    "Workshop",
+    "World Headlines",
     "Miscellaneous",
 ]
 
@@ -91,7 +97,7 @@ class LLMExtractionSchema(BaseModel):
     suggested_title: Optional[str]
     summary: Optional[str]
 
-    categories: List[str]
+    category: str = Field(description="Single best-fit category for this document")
     topics: List[str]
     tags: List[str]
 
@@ -124,7 +130,7 @@ class FinalFileRecord(BaseModel):
     suggested_filename: str  # Generated from title and metadata
 
     # Organization
-    categories: List[str]
+    category: str
 
     # Dates
     creation_date: Optional[date]
@@ -171,7 +177,8 @@ def sanitize_filename(text: str, max_length: int = 100) -> str:
 
 def generate_suggested_filename(
     title: str,
-    categories: List[str],
+    topics: List[str],
+    authors: List[Author],
     creation_date: Optional[date],
     file_type: str,
 ) -> str:
@@ -182,17 +189,22 @@ def generate_suggested_filename(
     if creation_date:
         parts.append(creation_date.strftime("%Y-%m-%d"))
     
-    # Add category prefix (first category, sanitized)
-    if categories:
-        category_part = sanitize_filename(categories[0], max_length=30)
-        parts.append(category_part)
+    # Add topics prefix (first topic, sanitized)
+    if topics:
+        topic_part = sanitize_filename(topics[0], max_length=30)
+        parts.append(topic_part)
+    
+    # Add speaker (first author, sanitised)
+    if authors:
+        author_part = sanitize_filename(authors[0].name, max_length=30)
+        parts.append(author_part)
     
     # Add sanitized title
     title_part = sanitize_filename(title, max_length=50)
     parts.append(title_part)
     
     # Join parts and add extension
-    filename = "-".join(parts)
+    filename = "__".join(parts)
     if not filename:
         filename = "untitled"
     
@@ -221,12 +233,13 @@ def build_final_record(
         title=title,
         suggested_filename=generate_suggested_filename(
             title=title,
-            categories=llm_result.categories,
+            topics=llm_result.topics,
+            authors=llm_result.authors,
             creation_date=llm_result.creation_date,
             file_type=file_type,
         ),
 
-        categories=llm_result.categories,
+        category=llm_result.category,
 
         creation_date=llm_result.creation_date,
         last_modified_date=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
@@ -258,10 +271,7 @@ def build_final_record(
 # 6. LLM Setup
 # ============================================================
 
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0,
-)
+llm = get_chat_llm(temperature=0)
 
 structured_llm = llm.with_structured_output(LLMExtractionSchema)
 
@@ -279,7 +289,7 @@ STRICT RULES:
 - If uncertain, return null or empty lists and record this in quality_flags.low_confidence_fields.
 - ORCID identifiers must only be included if explicitly written in the text.
 
-CATEGORIES (choose only from this list):
+CATEGORIES (choose exactly ONE from this list - pick the best fit):
 {CATEGORIES}
 
 KNOWN TOPICS (reuse if applicable):

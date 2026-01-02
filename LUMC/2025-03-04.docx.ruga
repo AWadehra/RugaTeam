@@ -1,0 +1,194 @@
+{
+  "file_id": "ec3befef-0422-4e4d-962c-5473699c54c4",
+  "original_path": "D:\\Projects\\RugaTeam\\LUMC\\2025-03-04.docx",
+  "file_type": "docx",
+  "content_hash": "39e902dda30752a224506098220fc8a598cbca096cbff3fc4ebb7689ed1b756e",
+  "title": "Departmental Meeting Summary - Early March 2025",
+  "suggested_filename": "2025-03-04__epidemiology__Saskia-le-Cessie__Departmental-Meeting-Summary-Early-March-2025.docx",
+  "category": "Miscellaneous",
+  "creation_date": "2025-03-04",
+  "last_modified_date": "2025-12-13T04:33:18Z",
+  "analysis_date": "2025-12-27T02:01:04.560312Z",
+  "authors": [
+    {
+      "name": "Saskia le Cessie",
+      "orcid": null
+    },
+    {
+      "name": "Zihua Li",
+      "orcid": null
+    },
+    {
+      "name": "Mirthe J. Klein Haneveld",
+      "orcid": null
+    },
+    {
+      "name": "Klea Vyshka",
+      "orcid": null
+    },
+    {
+      "name": "Charlotte M.W. Gaasterland",
+      "orcid": null
+    },
+    {
+      "name": "Anneloes van Staa",
+      "orcid": null
+    },
+    {
+      "name": "Agnies M. Van Eeghen",
+      "orcid": null
+    },
+    {
+      "name": "Svecla M",
+      "orcid": null
+    },
+    {
+      "name": "Li-Gao R",
+      "orcid": null
+    },
+    {
+      "name": "Falck D",
+      "orcid": null
+    },
+    {
+      "name": "Bonacina F",
+      "orcid": null
+    },
+    {
+      "name": "Monahan RC",
+      "orcid": null
+    },
+    {
+      "name": "Noordam R",
+      "orcid": null
+    },
+    {
+      "name": "van der Velde JHPM",
+      "orcid": null
+    },
+    {
+      "name": "Willems van Dijk K",
+      "orcid": null
+    },
+    {
+      "name": "de Koning E",
+      "orcid": null
+    },
+    {
+      "name": "Mook-Kanamori DO",
+      "orcid": null
+    },
+    {
+      "name": "Rosendaal FR",
+      "orcid": null
+    },
+    {
+      "name": "de Mutsert R",
+      "orcid": null
+    },
+    {
+      "name": "Judith P.L. Verlaan",
+      "orcid": null
+    }
+  ],
+  "topics": [
+    "epidemiology",
+    "bleeding",
+    "thrombocytopenia",
+    "hematology",
+    "fatigue",
+    "chronic kidney diseases",
+    "scientific communication",
+    "rare conditions",
+    "intellectual disability",
+    "transition of care",
+    "N-glycosylation",
+    "cardiovascular immunometabolism",
+    "insulin resistance",
+    "type 2 diabetes",
+    "GLP-1 agonists",
+    "obesity",
+    "AI",
+    "pathway analysis"
+  ],
+  "tags": [
+    "methods",
+    "teaching",
+    "clinical research",
+    "hematology",
+    "nephrology",
+    "cardiology",
+    "endocrinology",
+    "rare diseases",
+    "artificial intelligence",
+    "communication",
+    "departmental meeting"
+  ],
+  "summary": "This document summarizes a departmental meeting from early March 2025. It includes introductions of new employees Tamar (Epi-B PhD on bleeding and thrombocytopenia) and Lynn (internship on fatigue and chronic kidney diseases). Key announcements featured the department's 'Away Day' on 'Scientific Communication' being moved to September. Teaching updates covered the successful AWV1 course and the start of Methoden en Technieken BW-MT1 for first-year biomedical sciences students. Several publications were highlighted, touching on topics like transition to adult healthcare for young people with rare conditions, N-glycosylation in cardiovascular immunometabolism, glycoprotein acetyls response and type 2 diabetes risk, and GLP-1 agonists for cardiovascular outcomes in obesity. The meeting also included discussions on the uses of AI for daily work, with an upcoming presentation on AI for pathway analysis. Important dates, upcoming teaching schedules, and future World Headlines, Capita Selecta, and Research Meetings are also listed.",
+  "glossary_terms": [
+    {
+      "term": "Epi-B",
+      "definition": "A type of PhD project focusing on epidemiology, specifically on bleeding and thrombocytopenia in hematology.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Thrombocytopenia",
+      "definition": "A medical condition related to bleeding, identified as the subject of a PhD project.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "N-glycosylation signature",
+      "definition": "A biochemical characteristic discussed in relation to cardiovascular immunometabolism.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Cardiovascular immunometabolism",
+      "definition": "A scientific area of study where N-glycosylation signature has relevance.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Glycoprotein acetyls response",
+      "definition": "A biological response to a mixed meal, associated with increased insulin resistance and risk of type 2 diabetes.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Insulin resistance",
+      "definition": "A metabolic condition associated with glycoprotein acetyls response and an increased risk of type 2 diabetes.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Type 2 diabetes",
+      "definition": "A chronic metabolic disease, with increased risk associated with insulin resistance and glycoprotein acetyls response.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "GLP-1-agonists",
+      "definition": "A class of drugs discussed in the context of cardiovascular outcomes in obesity without diabetes.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Cardiovascular outcomes",
+      "definition": "Endpoints related to the cardiovascular system, discussed in relation to GLP-1 agonists and obesity.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Obesity",
+      "definition": "A medical condition discussed in relation to GLP-1 agonists and cardiovascular outcomes without diabetes.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "AI",
+      "definition": "Artificial Intelligence, discussed for its potential uses in daily work and in performing pathway analysis.",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Pathway analysis",
+      "definition": "An analytical method that can be performed using AI, specifically mentioned in the context of molecular epidemiology.",
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-27T02:01:04.560312Z"
+}

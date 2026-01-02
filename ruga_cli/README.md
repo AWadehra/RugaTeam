@@ -2,7 +2,7 @@
 
 Command-line interface for the RUGA server API.
 
-![RUGA CLI](../assets/ruga-cli.png)
+![RUGA CLI](../assets/ruga-cli2.png)
 
 *Screenshot of the RUGA CLI showing the ASCII art banner and server information*
 

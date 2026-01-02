@@ -1,0 +1,187 @@
+{
+  "file_id": "761432bc-8e21-4d7f-8b74-4c02e7751217",
+  "original_path": "D:\\Projects\\RugaTeam\\LUMC\\2023.02.14 Research Clinical Epidemiology.pptx",
+  "file_type": "pptx",
+  "content_hash": "7769c37158fbc38b407683b329dbbfe69c888328f842dd2cd021f55a1ef16949",
+  "title": "How do you, scientist, interpret my results?",
+  "suggested_filename": "2023-02-14__epidemiology__Anske-van-der-Bom__How-do-you,-scientist,-interpret-my-results.pptx",
+  "category": "Research Meeting",
+  "creation_date": "2023-02-14",
+  "last_modified_date": "2025-12-13T04:27:58Z",
+  "analysis_date": "2025-12-27T02:00:34.409077Z",
+  "authors": [
+    {
+      "name": "Anske van der Bom",
+      "orcid": null
+    },
+    {
+      "name": "Fabienne Plucinski-van Hout",
+      "orcid": null
+    },
+    {
+      "name": "Meindert Palmen",
+      "orcid": null
+    },
+    {
+      "name": "Jean-Louis Kerkhoffs",
+      "orcid": null
+    },
+    {
+      "name": "Peter Rosseel",
+      "orcid": null
+    },
+    {
+      "name": "Rutger Middelburg",
+      "orcid": null
+    },
+    {
+      "name": "Leo van de Watering",
+      "orcid": null
+    },
+    {
+      "name": "Camila Caram-Deelder",
+      "orcid": null
+    },
+    {
+      "name": "Aad Pors",
+      "orcid": null
+    }
+  ],
+  "topics": [
+    "epidemiology",
+    "transfusion",
+    "cardiac surgery",
+    "platelet storage",
+    "efficacy",
+    "safety",
+    "clinical outcomes",
+    "research methodology",
+    "recombinant factor VIIa",
+    "postpartum hemorrhage",
+    "real world data",
+    "randomized controlled trial",
+    "propensity score analysis",
+    "thromboembolism"
+  ],
+  "tags": [
+    "methods",
+    "statistics",
+    "clinical research",
+    "clinical medicine",
+    "hematology",
+    "transfusion medicine",
+    "regulatory affairs"
+  ],
+  "summary": "This presentation explores the interpretation of research results, specifically focusing on two distinct clinical studies. The first investigates the effect of longer storage of platelet concentrates (comparing 'fresh' vs. 'old' platelets) on efficacy and safety in cardiac surgery patients, evaluating endpoints such as in-hospital mortality, blood loss, and reoperation for bleeding. The second part discusses the efficacy and safety of recombinant factor VIIa (rFVIIa) in severe postpartum hemorrhage (sPPH), presenting results from a randomized controlled trial (RCT) supported by real-world data (RWD) and considerations for regulatory approval. Across both examples, the presentation highlights key challenges in interpretation including confounding, collider stratification bias, measurement bias, and random error.",
+  "glossary_terms": [
+    {
+      "term": "Platelet life span",
+      "definition": "8-9 days",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Platelet storage lesion",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Fresh platelets",
+      "definition": "1-3 days",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Old platelets",
+      "definition": "4-7 days",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "In-hospital mortality",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "SIRS",
+      "definition": "Systemic Inflammatory Response Syndrome",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "Recombinant factor VIIa",
+      "definition": "Activates factor X",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "PPH",
+      "definition": "Postpartum hemorrhage",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "RCT",
+      "definition": "Randomised controlled trial",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "RWD",
+      "definition": "Real World Data",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "PSAS",
+      "definition": "Propensity Score Analysis Set",
+      "source": "llm_extracted"
+    },
+    {
+      "term": "OR",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "CI",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "HR",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "PAS-B",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "PAS-C",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "EuroSCORE I",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "CABG",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "FAS",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "SD",
+      "definition": null,
+      "source": "llm_extracted"
+    },
+    {
+      "term": "IQR",
+      "definition": null,
+      "source": "llm_extracted"
+    }
+  ],
+  "possible_duplicate": false,
+  "reviewed_by_human": false,
+  "llm_model": "gpt-4o-mini",
+  "extracted_at": "2025-12-27T02:00:34.409077Z"
+}

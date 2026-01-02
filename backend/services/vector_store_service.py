@@ -147,8 +147,8 @@ class VectorStoreService:
                 # Add relevant fields from metadata
                 if "title" in metadata:
                     doc_metadata["title"] = metadata["title"]
-                if "categories" in metadata:
-                    doc_metadata["categories"] = str(metadata["categories"])
+                if "category" in metadata:
+                    doc_metadata["category"] = metadata["category"]
                 if "topics" in metadata:
                     doc_metadata["topics"] = str(metadata["topics"])
                 if "tags" in metadata:
@@ -317,58 +317,29 @@ class VectorStoreService:
         try:
             collection = self.vector_store._collection
             
-            # Get all documents - we'll filter in Python since categories are stored as string representations
-            # First, get all documents with embeddings
-            # IDs are returned by default, so we don't need to include them
+            # Get all documents - filter by category (now a simple string)
             all_results = collection.get(
                 include=["documents", "metadatas", "embeddings"],
             )
-            
+
             if not all_results or not all_results.get("ids"):
                 return []
-            
-            # Filter by category in Python
-            # Categories are stored as string representations like "['Education/Capita Selecta', 'Research Meeting']"
+
+            # Filter by category - simple string comparison
             filtered_ids = []
             filtered_documents = []
             filtered_metadatas = []
             filtered_embeddings = []
-            
+
             for i, metadata in enumerate(all_results.get("metadatas", [])):
-                categories_str = metadata.get("categories", "")
-                if categories_str:
-                    # Parse the string representation or check if category is in the string
-                    # Handle both list string format and simple string format
-                    import ast
-                    try:
-                        # Try to parse as Python literal (list string)
-                        categories_list = ast.literal_eval(categories_str)
-                        if isinstance(categories_list, list):
-                            if any(category.lower() in cat.lower() or cat.lower() in category.lower() 
-                                   for cat in categories_list):
-                                filtered_ids.append(all_results["ids"][i])
-                                filtered_documents.append(all_results["documents"][i])
-                                filtered_metadatas.append(metadata)
-                                embeddings_list = all_results.get("embeddings")
-                                if embeddings_list is not None and i < len(embeddings_list):
-                                    filtered_embeddings.append(embeddings_list[i])
-                        elif isinstance(categories_list, str):
-                            if category.lower() in categories_list.lower():
-                                filtered_ids.append(all_results["ids"][i])
-                                filtered_documents.append(all_results["documents"][i])
-                                filtered_metadatas.append(metadata)
-                                embeddings_list = all_results.get("embeddings")
-                                if embeddings_list is not None and i < len(embeddings_list):
-                                    filtered_embeddings.append(embeddings_list[i])
-                    except (ValueError, SyntaxError):
-                        # If parsing fails, do simple string contains check
-                        if category.lower() in categories_str.lower():
-                            filtered_ids.append(all_results["ids"][i])
-                            filtered_documents.append(all_results["documents"][i])
-                            filtered_metadatas.append(metadata)
-                            embeddings_list = all_results.get("embeddings")
-                            if embeddings_list is not None and i < len(embeddings_list):
-                                filtered_embeddings.append(embeddings_list[i])
+                doc_category = metadata.get("category", "")
+                if doc_category and category.lower() in doc_category.lower():
+                    filtered_ids.append(all_results["ids"][i])
+                    filtered_documents.append(all_results["documents"][i])
+                    filtered_metadatas.append(metadata)
+                    embeddings_list = all_results.get("embeddings")
+                    if embeddings_list is not None and i < len(embeddings_list):
+                        filtered_embeddings.append(embeddings_list[i])
             
             if not filtered_ids:
                 return []

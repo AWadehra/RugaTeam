@@ -340,7 +340,7 @@ async def generate_folder_structure(request: GenerateStructureRequest):
     Generate an organized folder structure suggestion using LLM with structured output.
     
     Analyzes all .ruga files in the root path and suggests a new folder organization
-    based on categories, dates, topics, and tags. The structure is organized by
+    based on category, dates, topics, and tags. The structure is organized by
     academic year and category.
     
     Request Body:
