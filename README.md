@@ -2,7 +2,7 @@
 
 **RUGA** (Ruga File Analysis & Organization Platform) is an intelligent file management system that uses Large Language Models (LLMs) to analyze, organize, and chat with your documents. RUGA creates `.ruga` metadata files for each document, enabling powerful search, organization, and retrieval capabilities.
 
-![RUGA CLI](assets/ruga-cli.png)
+![RUGA CLI](assets/ruga-cli2.png)
 
 ## What RUGA Does
 
